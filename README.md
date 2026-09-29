@@ -13,6 +13,8 @@ App web para organizar ideias de conteúdo (incluindo posts salvos do Instagram)
 - **Banco de ideias** (`/ideias`): salve ideias colando o link de um post do Instagram e/ou subindo um print, com notas e tags. O Instagram não oferece API pública para ler a sua lista de "salvos", por isso a importação é manual (colar o link e/ou print). Também dá para gerar 5 ideias novas por IA para o perfil selecionado, e gerar a arte de uma ideia por IA.
 - **Calendário** (`/calendario`): visão mensal, cria/edita posts com data, plataforma, formato (feed/reel/stories/carrossel), legenda, tags, status (ideia → rascunho → arte pronta → agendado → publicado) e upload da arte final (manual ou gerada por IA). Filtra por perfil. Posts sem data ficam numa lista lateral.
 - Uma ideia pode virar um post no calendário com um clique ("Usar no calendário").
+- **Desempenho** (`/desempenho`): registre métricas dos posts publicados e peça uma análise por IA com sugestões de calendário.
+- **Conexões** (`/conexoes`): login oficial OAuth com o Instagram (via Meta) para ler dados reais das suas contas Business — nunca login/senha automatizado, sempre pela tela oficial da Meta.
 
 ## Geração por IA (opcional)
 
@@ -22,6 +24,25 @@ Variáveis de ambiente necessárias (adicionar no projeto da Vercel e/ou em `.en
 
 - `ANTHROPIC_API_KEY` — chave da [console.anthropic.com](https://console.anthropic.com)
 - `OPENAI_API_KEY` — chave da [platform.openai.com](https://platform.openai.com/api-keys)
+
+## Conectar Instagram (opcional)
+
+Login oficial via Meta (Facebook Login for Business), sem senha armazenada no app. Como as 4 contas são da mesma empresa, basta **1 app no Meta for Developers**:
+
+1. Acesse [developers.facebook.com/apps](https://developers.facebook.com/apps) → Criar app → tipo "Negócios" ("Business")
+2. No painel do app, adicione o produto **"Facebook Login for Business"**
+3. Em Configurações → Básico, copie o **ID do aplicativo** e a **Chave secreta do aplicativo**
+4. Em Facebook Login for Business → Configurações, adicione em "URIs de redirecionamento OAuth válidos":
+   ```
+   https://SEU-DOMINIO/api/auth/instagram/callback
+   ```
+5. Garanta que as 4 contas do Instagram sejam contas Business/Criador, cada uma vinculada a uma Página do Facebook, e que essas Páginas estejam no seu Business Manager
+6. Como você (a dona da empresa) é administradora do app e das Páginas, a conexão funciona em modo de desenvolvimento, sem precisar esperar revisão pública da Meta
+
+Variáveis de ambiente:
+
+- `META_APP_ID`
+- `META_APP_SECRET`
 
 ## Rodando localmente
 

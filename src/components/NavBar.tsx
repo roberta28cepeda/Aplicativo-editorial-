@@ -9,6 +9,7 @@ const LINKS = [
   { href: "/calendario", label: "Calendário" },
   { href: "/ideias", label: "Ideias" },
   { href: "/desempenho", label: "Desempenho" },
+  { href: "/conexoes", label: "Conexões" },
 ];
 
 export default function NavBar({ email }: { email: string }) {

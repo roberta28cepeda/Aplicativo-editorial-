@@ -24,6 +24,18 @@ export interface BrandProfile {
   created_at: string;
 }
 
+export interface SocialConnection {
+  id: string;
+  user_id: string;
+  brand_profile_id: string | null;
+  provider: "instagram";
+  external_account_id: string;
+  external_username: string | null;
+  profile_picture_url: string | null;
+  page_id: string | null;
+  connected_at: string;
+}
+
 export interface Idea {
   id: string;
   user_id: string;
