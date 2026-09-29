@@ -13,6 +13,7 @@ import type {
   PostType,
 } from "@/types/db";
 import {
+  METRIC_FIELDS,
   PLATFORM_LABEL,
   POST_STATUS_LABEL,
   POST_TYPE_LABEL,
@@ -58,6 +59,13 @@ export default function PostModal({
   const [artPath, setArtPath] = useState(post?.art_path ?? null);
   const [saving, setSaving] = useState(false);
   const [generatingArt, setGeneratingArt] = useState(false);
+  const [metrics, setMetrics] = useState<Record<string, string>>({
+    metric_reach: post?.metric_reach?.toString() ?? "",
+    metric_likes: post?.metric_likes?.toString() ?? "",
+    metric_comments: post?.metric_comments?.toString() ?? "",
+    metric_saves: post?.metric_saves?.toString() ?? "",
+    metric_shares: post?.metric_shares?.toString() ?? "",
+  });
 
   async function handleGenerateArt() {
     if (!post) return;
@@ -105,6 +113,15 @@ export default function PostModal({
         status,
         tags,
         art_path: finalArtPath,
+        metric_reach: metrics.metric_reach ? Number(metrics.metric_reach) : null,
+        metric_likes: metrics.metric_likes ? Number(metrics.metric_likes) : null,
+        metric_comments: metrics.metric_comments
+          ? Number(metrics.metric_comments)
+          : null,
+        metric_saves: metrics.metric_saves ? Number(metrics.metric_saves) : null,
+        metric_shares: metrics.metric_shares
+          ? Number(metrics.metric_shares)
+          : null,
       };
 
       if (post) {
@@ -336,6 +353,35 @@ export default function PostModal({
               className="w-full text-xs"
             />
           </div>
+
+          {post && (status === "posted" || post.status === "posted") && (
+            <div>
+              <label className="mb-1 block text-xs font-medium text-neutral-600">
+                Desempenho (preencha depois de publicar)
+              </label>
+              <div className="grid grid-cols-3 gap-2">
+                {METRIC_FIELDS.map((field) => (
+                  <div key={field.key}>
+                    <label className="mb-0.5 block text-[10px] text-neutral-500">
+                      {field.label}
+                    </label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={metrics[field.key as string]}
+                      onChange={(e) =>
+                        setMetrics({
+                          ...metrics,
+                          [field.key as string]: e.target.value,
+                        })
+                      }
+                      className="w-full rounded-md border border-neutral-300 px-2 py-1.5 text-sm outline-none focus:border-neutral-500"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div className="flex items-center gap-2 pt-2">
             <button

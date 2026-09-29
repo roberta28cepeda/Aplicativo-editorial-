@@ -8,6 +8,7 @@ const LINKS = [
   { href: "/perfis", label: "Perfis" },
   { href: "/calendario", label: "Calendário" },
   { href: "/ideias", label: "Ideias" },
+  { href: "/desempenho", label: "Desempenho" },
 ];
 
 export default function NavBar({ email }: { email: string }) {

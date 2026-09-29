@@ -19,6 +19,8 @@ export interface BrandProfile {
   logo_path: string | null;
   reference_images: string[];
   archived: boolean;
+  last_analysis: string | null;
+  last_analysis_at: string | null;
   created_at: string;
 }
 
@@ -50,9 +52,22 @@ export interface Post {
   art_path: string | null;
   tags: string[];
   ai_generated: boolean;
+  metric_reach: number | null;
+  metric_likes: number | null;
+  metric_comments: number | null;
+  metric_saves: number | null;
+  metric_shares: number | null;
   created_at: string;
   updated_at: string;
 }
+
+export const METRIC_FIELDS: { key: keyof Post; label: string }[] = [
+  { key: "metric_reach", label: "Alcance" },
+  { key: "metric_likes", label: "Curtidas" },
+  { key: "metric_comments", label: "Comentários" },
+  { key: "metric_saves", label: "Salvamentos" },
+  { key: "metric_shares", label: "Compartilhamentos" },
+];
 
 export const POST_STATUS_LABEL: Record<PostStatus, string> = {
   idea: "Ideia",
