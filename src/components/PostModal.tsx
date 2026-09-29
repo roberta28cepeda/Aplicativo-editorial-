@@ -4,7 +4,14 @@ import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { uploadMedia } from "@/lib/supabase/storage";
 import MediaThumb from "@/components/MediaThumb";
-import type { Idea, Platform, Post, PostStatus, PostType } from "@/types/db";
+import type {
+  BrandProfile,
+  Idea,
+  Platform,
+  Post,
+  PostStatus,
+  PostType,
+} from "@/types/db";
 import {
   PLATFORM_LABEL,
   POST_STATUS_LABEL,
@@ -14,7 +21,9 @@ import {
 export default function PostModal({
   post,
   defaultDate,
+  defaultBrandProfileId,
   ideas,
+  profiles,
   userId,
   onClose,
   onSaved,
@@ -22,13 +31,18 @@ export default function PostModal({
 }: {
   post: Post | null;
   defaultDate: string | null;
+  defaultBrandProfileId?: string | null;
   ideas: Idea[];
+  profiles: BrandProfile[];
   userId: string;
   onClose: () => void;
   onSaved: (post: Post) => void;
   onDeleted: (id: string) => void;
 }) {
   const [title, setTitle] = useState(post?.title ?? "");
+  const [brandProfileId, setBrandProfileId] = useState(
+    post?.brand_profile_id ?? defaultBrandProfileId ?? "",
+  );
   const [ideaId, setIdeaId] = useState(post?.idea_id ?? "");
   const [caption, setCaption] = useState(post?.caption ?? "");
   const [platform, setPlatform] = useState<Platform>(
@@ -62,6 +76,7 @@ export default function PostModal({
 
       const payload = {
         title: title.trim() || "Post sem título",
+        brand_profile_id: brandProfileId || null,
         idea_id: ideaId || null,
         caption: caption.trim() || null,
         platform,
@@ -141,6 +156,26 @@ export default function PostModal({
               className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-500"
             />
           </div>
+
+          {profiles.length > 0 && (
+            <div>
+              <label className="mb-1 block text-xs font-medium text-neutral-600">
+                Perfil / conta
+              </label>
+              <select
+                value={brandProfileId}
+                onChange={(e) => setBrandProfileId(e.target.value)}
+                className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-500"
+              >
+                <option value="">Sem perfil definido</option>
+                {profiles.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
           <div>
             <label className="mb-1 block text-xs font-medium text-neutral-600">

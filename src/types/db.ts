@@ -2,10 +2,29 @@ export type IdeaStatus = "inbox" | "planned" | "archived";
 export type PostStatus = "idea" | "draft" | "art_ready" | "scheduled" | "posted";
 export type PostType = "feed" | "reel" | "story" | "carousel";
 export type Platform = "instagram" | "tiktok" | "facebook" | "linkedin" | "outro";
+export type BrandPlatform = "instagram" | "linkedin" | "google_business" | "outro";
+
+export interface BrandProfile {
+  id: string;
+  user_id: string;
+  name: string;
+  platform: BrandPlatform;
+  handle: string | null;
+  niche: string | null;
+  tone_of_voice: string | null;
+  target_audience: string | null;
+  brand_colors: string[];
+  differentiators: string | null;
+  notes: string | null;
+  logo_path: string | null;
+  archived: boolean;
+  created_at: string;
+}
 
 export interface Idea {
   id: string;
   user_id: string;
+  brand_profile_id: string | null;
   source_url: string | null;
   image_path: string | null;
   title: string;
@@ -19,6 +38,7 @@ export interface Post {
   id: string;
   user_id: string;
   idea_id: string | null;
+  brand_profile_id: string | null;
   title: string;
   caption: string | null;
   platform: Platform;
@@ -66,4 +86,18 @@ export const IDEA_STATUS_LABEL: Record<IdeaStatus, string> = {
   inbox: "Inbox",
   planned: "Planejada",
   archived: "Arquivada",
+};
+
+export const BRAND_PLATFORM_LABEL: Record<BrandPlatform, string> = {
+  instagram: "Instagram",
+  linkedin: "LinkedIn (Página de Empresa)",
+  google_business: "Google Perfil da Empresa",
+  outro: "Outro",
+};
+
+export const BRAND_PLATFORM_COLOR: Record<BrandPlatform, string> = {
+  instagram: "bg-pink-100 text-pink-700",
+  linkedin: "bg-sky-100 text-sky-700",
+  google_business: "bg-yellow-100 text-yellow-800",
+  outro: "bg-neutral-200 text-neutral-700",
 };

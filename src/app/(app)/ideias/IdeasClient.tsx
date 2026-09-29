@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { uploadMedia, removeMedia } from "@/lib/supabase/storage";
 import MediaThumb from "@/components/MediaThumb";
-import type { Idea, IdeaStatus } from "@/types/db";
-import { IDEA_STATUS_LABEL } from "@/types/db";
+import type { BrandProfile, Idea, IdeaStatus } from "@/types/db";
+import { BRAND_PLATFORM_COLOR, IDEA_STATUS_LABEL } from "@/types/db";
 
 const FILTERS: { key: "all" | IdeaStatus; label: string }[] = [
   { key: "all", label: "Todas" },
@@ -17,30 +17,45 @@ const FILTERS: { key: "all" | IdeaStatus; label: string }[] = [
 
 export default function IdeasClient({
   initialIdeas,
+  profiles,
   userId,
 }: {
   initialIdeas: Idea[];
+  profiles: BrandProfile[];
   userId: string;
 }) {
   const router = useRouter();
   const [ideas, setIdeas] = useState<Idea[]>(initialIdeas);
   const [filter, setFilter] = useState<"all" | IdeaStatus>("all");
+  const [profileFilter, setProfileFilter] = useState<"all" | string>("all");
   const [modalOpen, setModalOpen] = useState(false);
   const [saving, setSaving] = useState(false);
 
   const [title, setTitle] = useState("");
+  const [brandProfileId, setBrandProfileId] = useState("");
   const [sourceUrl, setSourceUrl] = useState("");
   const [notes, setNotes] = useState("");
   const [tagsInput, setTagsInput] = useState("");
   const [file, setFile] = useState<File | null>(null);
 
+  const profileById = useMemo(() => {
+    const map = new Map<string, BrandProfile>();
+    for (const p of profiles) map.set(p.id, p);
+    return map;
+  }, [profiles]);
+
   const visibleIdeas = useMemo(() => {
-    if (filter === "all") return ideas;
-    return ideas.filter((i) => i.status === filter);
-  }, [ideas, filter]);
+    return ideas.filter((i) => {
+      if (filter !== "all" && i.status !== filter) return false;
+      if (profileFilter !== "all" && i.brand_profile_id !== profileFilter)
+        return false;
+      return true;
+    });
+  }, [ideas, filter, profileFilter]);
 
   function resetForm() {
     setTitle("");
+    setBrandProfileId("");
     setSourceUrl("");
     setNotes("");
     setTagsInput("");
@@ -68,6 +83,7 @@ export default function IdeasClient({
         .from("ideas")
         .insert({
           user_id: userId,
+          brand_profile_id: brandProfileId || null,
           title: title.trim() || "Ideia sem título",
           source_url: sourceUrl.trim() || null,
           notes: notes.trim() || null,
@@ -134,6 +150,7 @@ export default function IdeasClient({
     const { error } = await supabase.schema("editorial").from("posts").insert({
       user_id: userId,
       idea_id: idea.id,
+      brand_profile_id: idea.brand_profile_id,
       title: idea.title,
       caption: idea.notes,
       tags: idea.tags,
@@ -174,7 +191,7 @@ export default function IdeasClient({
         </button>
       </div>
 
-      <div className="mb-4 flex gap-1">
+      <div className="mb-3 flex flex-wrap gap-1">
         {FILTERS.map((f) => (
           <button
             key={f.key}
@@ -189,6 +206,34 @@ export default function IdeasClient({
           </button>
         ))}
       </div>
+
+      {profiles.length > 0 && (
+        <div className="mb-4 flex flex-wrap gap-1">
+          <button
+            onClick={() => setProfileFilter("all")}
+            className={`rounded-md px-3 py-1.5 text-xs font-medium transition ${
+              profileFilter === "all"
+                ? "bg-neutral-900 text-white"
+                : "bg-white text-neutral-600 hover:bg-neutral-100"
+            }`}
+          >
+            Todos os perfis
+          </button>
+          {profiles.map((p) => (
+            <button
+              key={p.id}
+              onClick={() => setProfileFilter(p.id)}
+              className={`rounded-md px-3 py-1.5 text-xs font-medium transition ${
+                profileFilter === p.id
+                  ? "bg-neutral-900 text-white"
+                  : "bg-white text-neutral-600 hover:bg-neutral-100"
+              }`}
+            >
+              {p.name}
+            </button>
+          ))}
+        </div>
+      )}
 
       {visibleIdeas.length === 0 ? (
         <div className="rounded-lg border border-dashed border-neutral-300 p-10 text-center text-sm text-neutral-500">
@@ -216,6 +261,15 @@ export default function IdeasClient({
                     {IDEA_STATUS_LABEL[idea.status]}
                   </span>
                 </div>
+
+                {idea.brand_profile_id &&
+                  profileById.get(idea.brand_profile_id) && (
+                    <span
+                      className={`inline-block w-fit rounded-full px-1.5 py-0.5 text-[10px] font-medium ${BRAND_PLATFORM_COLOR[profileById.get(idea.brand_profile_id)!.platform]}`}
+                    >
+                      {profileById.get(idea.brand_profile_id)!.name}
+                    </span>
+                  )}
 
                 {idea.source_url && (
                   <a
@@ -305,6 +359,26 @@ export default function IdeasClient({
                   className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-500"
                 />
               </div>
+
+              {profiles.length > 0 && (
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-neutral-600">
+                    Perfil / conta
+                  </label>
+                  <select
+                    value={brandProfileId}
+                    onChange={(e) => setBrandProfileId(e.target.value)}
+                    className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-500"
+                  >
+                    <option value="">Sem perfil definido</option>
+                    {profiles.map((p) => (
+                      <option key={p.id} value={p.id}>
+                        {p.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
 
               <div>
                 <label className="mb-1 block text-xs font-medium text-neutral-600">

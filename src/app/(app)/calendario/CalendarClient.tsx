@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import PostModal from "@/components/PostModal";
-import type { Idea, Post } from "@/types/db";
+import type { BrandProfile, Idea, Post } from "@/types/db";
 import { POST_STATUS_COLOR, POST_STATUS_LABEL } from "@/types/db";
 
 const WEEKDAYS = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
@@ -50,13 +50,16 @@ function buildMonthGrid(monthStart: Date) {
 export default function CalendarClient({
   initialPosts,
   ideas,
+  profiles,
   userId,
 }: {
   initialPosts: Post[];
   ideas: Idea[];
+  profiles: BrandProfile[];
   userId: string;
 }) {
   const [posts, setPosts] = useState<Post[]>(initialPosts);
+  const [profileFilter, setProfileFilter] = useState<"all" | string>("all");
   const [monthStart, setMonthStart] = useState(() => startOfMonth(new Date()));
   const [modalState, setModalState] = useState<{
     open: boolean;
@@ -67,20 +70,25 @@ export default function CalendarClient({
   const today = toISODate(new Date());
   const days = useMemo(() => buildMonthGrid(monthStart), [monthStart]);
 
+  const filteredPosts = useMemo(() => {
+    if (profileFilter === "all") return posts;
+    return posts.filter((p) => p.brand_profile_id === profileFilter);
+  }, [posts, profileFilter]);
+
   const postsByDate = useMemo(() => {
     const map = new Map<string, Post[]>();
-    for (const post of posts) {
+    for (const post of filteredPosts) {
       if (!post.scheduled_date) continue;
       const list = map.get(post.scheduled_date) ?? [];
       list.push(post);
       map.set(post.scheduled_date, list);
     }
     return map;
-  }, [posts]);
+  }, [filteredPosts]);
 
   const unscheduled = useMemo(
-    () => posts.filter((p) => !p.scheduled_date),
-    [posts],
+    () => filteredPosts.filter((p) => !p.scheduled_date),
+    [filteredPosts],
   );
 
   function openNewPost(date: string) {
@@ -146,6 +154,34 @@ export default function CalendarClient({
             </button>
           </div>
         </div>
+
+        {profiles.length > 0 && (
+          <div className="mb-3 flex flex-wrap gap-1">
+            <button
+              onClick={() => setProfileFilter("all")}
+              className={`rounded-md px-3 py-1.5 text-xs font-medium transition ${
+                profileFilter === "all"
+                  ? "bg-neutral-900 text-white"
+                  : "bg-white text-neutral-600 hover:bg-neutral-100"
+              }`}
+            >
+              Todos os perfis
+            </button>
+            {profiles.map((p) => (
+              <button
+                key={p.id}
+                onClick={() => setProfileFilter(p.id)}
+                className={`rounded-md px-3 py-1.5 text-xs font-medium transition ${
+                  profileFilter === p.id
+                    ? "bg-neutral-900 text-white"
+                    : "bg-white text-neutral-600 hover:bg-neutral-100"
+                }`}
+              >
+                {p.name}
+              </button>
+            ))}
+          </div>
+        )}
 
         <div className="grid grid-cols-7 overflow-hidden rounded-lg border border-neutral-200 bg-white">
           {WEEKDAYS.map((day) => (
@@ -245,7 +281,11 @@ export default function CalendarClient({
         <PostModal
           post={modalState.post}
           defaultDate={modalState.defaultDate}
+          defaultBrandProfileId={
+            profileFilter !== "all" ? profileFilter : null
+          }
           ideas={ideas}
+          profiles={profiles}
           userId={userId}
           onClose={closeModal}
           onSaved={handleSaved}
