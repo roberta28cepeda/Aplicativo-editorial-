@@ -57,6 +57,26 @@ export default function PostModal({
   const [file, setFile] = useState<File | null>(null);
   const [artPath, setArtPath] = useState(post?.art_path ?? null);
   const [saving, setSaving] = useState(false);
+  const [generatingArt, setGeneratingArt] = useState(false);
+
+  async function handleGenerateArt() {
+    if (!post) return;
+    setGeneratingArt(true);
+    try {
+      const res = await fetch("/api/ai/art", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ target: "post", id: post.id }),
+      });
+      const body = await res.json();
+      if (!res.ok) throw new Error(body.error ?? "Falha ao gerar arte.");
+      setArtPath(body.record.art_path);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Falha ao gerar arte.");
+    } finally {
+      setGeneratingArt(false);
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -284,9 +304,21 @@ export default function PostModal({
           </div>
 
           <div>
-            <label className="mb-1 block text-xs font-medium text-neutral-600">
-              Arte do post
-            </label>
+            <div className="mb-1 flex items-center justify-between">
+              <label className="block text-xs font-medium text-neutral-600">
+                Arte do post
+              </label>
+              {post && (
+                <button
+                  type="button"
+                  onClick={handleGenerateArt}
+                  disabled={generatingArt}
+                  className="rounded-md bg-violet-50 px-2 py-0.5 text-[11px] font-medium text-violet-700 hover:bg-violet-100 disabled:opacity-50"
+                >
+                  {generatingArt ? "Gerando..." : "✨ Gerar com IA"}
+                </button>
+              )}
+            </div>
             {artPath && (
               <MediaThumb
                 path={artPath}

@@ -30,6 +30,10 @@ export default function IdeasClient({
   const [profileFilter, setProfileFilter] = useState<"all" | string>("all");
   const [modalOpen, setModalOpen] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [generatingIdeas, setGeneratingIdeas] = useState(false);
+  const [generatingArtFor, setGeneratingArtFor] = useState<string | null>(
+    null,
+  );
 
   const [title, setTitle] = useState("");
   const [brandProfileId, setBrandProfileId] = useState("");
@@ -174,6 +178,45 @@ export default function IdeasClient({
     router.push("/calendario");
   }
 
+  async function handleGenerateIdeas() {
+    if (profileFilter === "all") return;
+    setGeneratingIdeas(true);
+    try {
+      const res = await fetch("/api/ai/ideas", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ brand_profile_id: profileFilter }),
+      });
+      const body = await res.json();
+      if (!res.ok) throw new Error(body.error ?? "Falha ao gerar ideias.");
+      setIdeas((prev) => [...body.ideas, ...prev]);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Falha ao gerar ideias.");
+    } finally {
+      setGeneratingIdeas(false);
+    }
+  }
+
+  async function handleGenerateArt(idea: Idea) {
+    setGeneratingArtFor(idea.id);
+    try {
+      const res = await fetch("/api/ai/art", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ target: "idea", id: idea.id }),
+      });
+      const body = await res.json();
+      if (!res.ok) throw new Error(body.error ?? "Falha ao gerar arte.");
+      setIdeas((prev) =>
+        prev.map((i) => (i.id === idea.id ? (body.record as Idea) : i)),
+      );
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Falha ao gerar arte.");
+    } finally {
+      setGeneratingArtFor(null);
+    }
+  }
+
   return (
     <div className="mx-auto max-w-5xl px-4 py-6">
       <div className="mb-5 flex items-center justify-between">
@@ -232,6 +275,17 @@ export default function IdeasClient({
               {p.name}
             </button>
           ))}
+          {profileFilter !== "all" && (
+            <button
+              onClick={handleGenerateIdeas}
+              disabled={generatingIdeas}
+              className="rounded-md bg-violet-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-violet-500 disabled:opacity-50"
+            >
+              {generatingIdeas
+                ? "Gerando..."
+                : "✨ Gerar 5 ideias com IA para este perfil"}
+            </button>
+          )}
         </div>
       )}
 
@@ -257,9 +311,16 @@ export default function IdeasClient({
                   <h3 className="text-sm font-semibold leading-snug">
                     {idea.title}
                   </h3>
-                  <span className="shrink-0 rounded-full bg-neutral-100 px-2 py-0.5 text-[10px] font-medium text-neutral-600">
-                    {IDEA_STATUS_LABEL[idea.status]}
-                  </span>
+                  <div className="flex shrink-0 gap-1">
+                    {idea.ai_generated && (
+                      <span className="rounded-full bg-violet-100 px-2 py-0.5 text-[10px] font-medium text-violet-700">
+                        ✨ IA
+                      </span>
+                    )}
+                    <span className="rounded-full bg-neutral-100 px-2 py-0.5 text-[10px] font-medium text-neutral-600">
+                      {IDEA_STATUS_LABEL[idea.status]}
+                    </span>
+                  </div>
                 </div>
 
                 {idea.brand_profile_id &&
@@ -299,6 +360,18 @@ export default function IdeasClient({
                       </span>
                     ))}
                   </div>
+                )}
+
+                {!idea.image_path && (
+                  <button
+                    onClick={() => handleGenerateArt(idea)}
+                    disabled={generatingArtFor === idea.id}
+                    className="w-fit rounded-md bg-violet-50 px-2 py-1 text-[11px] font-medium text-violet-700 hover:bg-violet-100 disabled:opacity-50"
+                  >
+                    {generatingArtFor === idea.id
+                      ? "Gerando arte..."
+                      : "✨ Gerar arte com IA"}
+                  </button>
                 )}
 
                 <div className="mt-auto flex items-center gap-2 pt-2">

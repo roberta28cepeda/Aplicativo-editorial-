@@ -31,6 +31,7 @@ export interface Idea {
   notes: string | null;
   tags: string[];
   status: IdeaStatus;
+  ai_generated: boolean;
   created_at: string;
 }
 
@@ -47,6 +48,7 @@ export interface Post {
   status: PostStatus;
   art_path: string | null;
   tags: string[];
+  ai_generated: boolean;
   created_at: string;
   updated_at: string;
 }
