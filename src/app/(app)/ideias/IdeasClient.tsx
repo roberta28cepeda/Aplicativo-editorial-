@@ -1,0 +1,371 @@
+"use client";
+
+import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
+import { uploadMedia, removeMedia } from "@/lib/supabase/storage";
+import MediaThumb from "@/components/MediaThumb";
+import type { Idea, IdeaStatus } from "@/types/db";
+import { IDEA_STATUS_LABEL } from "@/types/db";
+
+const FILTERS: { key: "all" | IdeaStatus; label: string }[] = [
+  { key: "all", label: "Todas" },
+  { key: "inbox", label: "Inbox" },
+  { key: "planned", label: "Planejadas" },
+  { key: "archived", label: "Arquivadas" },
+];
+
+export default function IdeasClient({
+  initialIdeas,
+  userId,
+}: {
+  initialIdeas: Idea[];
+  userId: string;
+}) {
+  const router = useRouter();
+  const [ideas, setIdeas] = useState<Idea[]>(initialIdeas);
+  const [filter, setFilter] = useState<"all" | IdeaStatus>("all");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  const [title, setTitle] = useState("");
+  const [sourceUrl, setSourceUrl] = useState("");
+  const [notes, setNotes] = useState("");
+  const [tagsInput, setTagsInput] = useState("");
+  const [file, setFile] = useState<File | null>(null);
+
+  const visibleIdeas = useMemo(() => {
+    if (filter === "all") return ideas;
+    return ideas.filter((i) => i.status === filter);
+  }, [ideas, filter]);
+
+  function resetForm() {
+    setTitle("");
+    setSourceUrl("");
+    setNotes("");
+    setTagsInput("");
+    setFile(null);
+  }
+
+  async function handleAddIdea(e: React.FormEvent) {
+    e.preventDefault();
+    setSaving(true);
+    const supabase = createClient();
+
+    try {
+      let image_path: string | null = null;
+      if (file) {
+        image_path = await uploadMedia(userId, "ideas", file);
+      }
+
+      const tags = tagsInput
+        .split(",")
+        .map((t) => t.trim())
+        .filter(Boolean);
+
+      const { data, error } = await supabase
+        .schema("editorial")
+        .from("ideas")
+        .insert({
+          user_id: userId,
+          title: title.trim() || "Ideia sem título",
+          source_url: sourceUrl.trim() || null,
+          notes: notes.trim() || null,
+          tags,
+          image_path,
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setIdeas((prev) => [data as Idea, ...prev]);
+      resetForm();
+      setModalOpen(false);
+    } catch (err) {
+      alert(
+        err instanceof Error ? err.message : "Não foi possível salvar a ideia.",
+      );
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function handleDelete(idea: Idea) {
+    if (!confirm(`Excluir a ideia "${idea.title}"?`)) return;
+    const supabase = createClient();
+    const { error } = await supabase
+      .schema("editorial")
+      .from("ideas")
+      .delete()
+      .eq("id", idea.id);
+
+    if (error) {
+      alert(error.message);
+      return;
+    }
+    if (idea.image_path) {
+      removeMedia(idea.image_path).catch(() => {});
+    }
+    setIdeas((prev) => prev.filter((i) => i.id !== idea.id));
+  }
+
+  async function handleArchiveToggle(idea: Idea) {
+    const newStatus: IdeaStatus =
+      idea.status === "archived" ? "inbox" : "archived";
+    const supabase = createClient();
+    const { error } = await supabase
+      .schema("editorial")
+      .from("ideas")
+      .update({ status: newStatus })
+      .eq("id", idea.id);
+
+    if (error) {
+      alert(error.message);
+      return;
+    }
+    setIdeas((prev) =>
+      prev.map((i) => (i.id === idea.id ? { ...i, status: newStatus } : i)),
+    );
+  }
+
+  async function handleUseInCalendar(idea: Idea) {
+    const supabase = createClient();
+    const { error } = await supabase.schema("editorial").from("posts").insert({
+      user_id: userId,
+      idea_id: idea.id,
+      title: idea.title,
+      caption: idea.notes,
+      tags: idea.tags,
+      status: "idea",
+    });
+
+    if (error) {
+      alert(error.message);
+      return;
+    }
+
+    await supabase
+      .schema("editorial")
+      .from("ideas")
+      .update({ status: "planned" })
+      .eq("id", idea.id);
+
+    setIdeas((prev) =>
+      prev.map((i) => (i.id === idea.id ? { ...i, status: "planned" } : i)),
+    );
+    router.push("/calendario");
+  }
+
+  return (
+    <div className="mx-auto max-w-5xl px-4 py-6">
+      <div className="mb-5 flex items-center justify-between">
+        <div>
+          <h1 className="text-xl font-semibold">Banco de ideias</h1>
+          <p className="text-sm text-neutral-500">
+            Salve posts do Instagram (link ou print) e outras inspirações aqui.
+          </p>
+        </div>
+        <button
+          onClick={() => setModalOpen(true)}
+          className="rounded-lg bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-700"
+        >
+          + Nova ideia
+        </button>
+      </div>
+
+      <div className="mb-4 flex gap-1">
+        {FILTERS.map((f) => (
+          <button
+            key={f.key}
+            onClick={() => setFilter(f.key)}
+            className={`rounded-md px-3 py-1.5 text-xs font-medium transition ${
+              filter === f.key
+                ? "bg-neutral-900 text-white"
+                : "bg-white text-neutral-600 hover:bg-neutral-100"
+            }`}
+          >
+            {f.label}
+          </button>
+        ))}
+      </div>
+
+      {visibleIdeas.length === 0 ? (
+        <div className="rounded-lg border border-dashed border-neutral-300 p-10 text-center text-sm text-neutral-500">
+          Nenhuma ideia aqui ainda. Clique em &quot;+ Nova ideia&quot; para
+          colar um link do Instagram ou subir um print de um post salvo.
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {visibleIdeas.map((idea) => (
+            <div
+              key={idea.id}
+              className="flex flex-col overflow-hidden rounded-lg border border-neutral-200 bg-white"
+            >
+              <MediaThumb
+                path={idea.image_path}
+                alt={idea.title}
+                className="h-40 w-full object-cover"
+              />
+              <div className="flex flex-1 flex-col gap-2 p-3">
+                <div className="flex items-start justify-between gap-2">
+                  <h3 className="text-sm font-semibold leading-snug">
+                    {idea.title}
+                  </h3>
+                  <span className="shrink-0 rounded-full bg-neutral-100 px-2 py-0.5 text-[10px] font-medium text-neutral-600">
+                    {IDEA_STATUS_LABEL[idea.status]}
+                  </span>
+                </div>
+
+                {idea.source_url && (
+                  <a
+                    href={idea.source_url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="truncate text-xs text-blue-600 hover:underline"
+                  >
+                    {idea.source_url}
+                  </a>
+                )}
+
+                {idea.notes && (
+                  <p className="line-clamp-3 text-xs text-neutral-600">
+                    {idea.notes}
+                  </p>
+                )}
+
+                {idea.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-1">
+                    {idea.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="rounded-full bg-neutral-100 px-2 py-0.5 text-[10px] text-neutral-500"
+                      >
+                        #{tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
+
+                <div className="mt-auto flex items-center gap-2 pt-2">
+                  <button
+                    onClick={() => handleUseInCalendar(idea)}
+                    className="flex-1 rounded-md bg-neutral-900 px-2 py-1.5 text-xs font-medium text-white hover:bg-neutral-700"
+                  >
+                    Usar no calendário
+                  </button>
+                  <button
+                    onClick={() => handleArchiveToggle(idea)}
+                    title={
+                      idea.status === "archived" ? "Desarquivar" : "Arquivar"
+                    }
+                    className="rounded-md border border-neutral-200 px-2 py-1.5 text-xs text-neutral-600 hover:bg-neutral-50"
+                  >
+                    {idea.status === "archived" ? "↺" : "⤓"}
+                  </button>
+                  <button
+                    onClick={() => handleDelete(idea)}
+                    title="Excluir"
+                    className="rounded-md border border-neutral-200 px-2 py-1.5 text-xs text-red-500 hover:bg-red-50"
+                  >
+                    ✕
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {modalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+          <div className="w-full max-w-md rounded-xl bg-white p-5 shadow-lg">
+            <div className="mb-3 flex items-center justify-between">
+              <h2 className="text-base font-semibold">Nova ideia</h2>
+              <button
+                onClick={() => {
+                  setModalOpen(false);
+                  resetForm();
+                }}
+                className="text-neutral-400 hover:text-neutral-700"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleAddIdea} className="space-y-3">
+              <div>
+                <label className="mb-1 block text-xs font-medium text-neutral-600">
+                  Título
+                </label>
+                <input
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="Ex: Reel de bastidores"
+                  className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-500"
+                />
+              </div>
+
+              <div>
+                <label className="mb-1 block text-xs font-medium text-neutral-600">
+                  Link do post salvo (Instagram, etc.)
+                </label>
+                <input
+                  value={sourceUrl}
+                  onChange={(e) => setSourceUrl(e.target.value)}
+                  placeholder="https://www.instagram.com/p/..."
+                  className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-500"
+                />
+              </div>
+
+              <div>
+                <label className="mb-1 block text-xs font-medium text-neutral-600">
+                  Print / imagem de referência
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+                  className="w-full text-xs"
+                />
+              </div>
+
+              <div>
+                <label className="mb-1 block text-xs font-medium text-neutral-600">
+                  Notas
+                </label>
+                <textarea
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  rows={3}
+                  placeholder="Por que essa ideia é boa, como adaptar pro seu perfil..."
+                  className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-500"
+                />
+              </div>
+
+              <div>
+                <label className="mb-1 block text-xs font-medium text-neutral-600">
+                  Tags (separadas por vírgula)
+                </label>
+                <input
+                  value={tagsInput}
+                  onChange={(e) => setTagsInput(e.target.value)}
+                  placeholder="reels, bastidores, engajamento"
+                  className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-500"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={saving}
+                className="w-full rounded-md bg-neutral-900 px-3 py-2 text-sm font-medium text-white hover:bg-neutral-700 disabled:opacity-50"
+              >
+                {saving ? "Salvando..." : "Salvar ideia"}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
