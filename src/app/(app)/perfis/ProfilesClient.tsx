@@ -32,6 +32,8 @@ export default function ProfilesClient({
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState(EMPTY_FORM);
   const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [referenceImages, setReferenceImages] = useState<string[]>([]);
+  const [newReferenceFiles, setNewReferenceFiles] = useState<File[]>([]);
 
   const grouped: Record<BrandPlatform, BrandProfile[]> = {
     instagram: [],
@@ -47,6 +49,8 @@ export default function ProfilesClient({
     setEditing(null);
     setForm(EMPTY_FORM);
     setLogoFile(null);
+    setReferenceImages([]);
+    setNewReferenceFiles([]);
     setModalOpen(true);
   }
 
@@ -64,6 +68,8 @@ export default function ProfilesClient({
       notes: profile.notes ?? "",
     });
     setLogoFile(null);
+    setReferenceImages(profile.reference_images ?? []);
+    setNewReferenceFiles([]);
     setModalOpen(true);
   }
 
@@ -77,6 +83,11 @@ export default function ProfilesClient({
       if (logoFile) {
         logo_path = await uploadMedia(userId, "logos", logoFile);
       }
+
+      const newPaths = await Promise.all(
+        newReferenceFiles.map((f) => uploadMedia(userId, "references", f)),
+      );
+      const finalReferenceImages = [...referenceImages, ...newPaths];
 
       const payload = {
         name: form.name.trim() || "Perfil sem nome",
@@ -92,6 +103,7 @@ export default function ProfilesClient({
         differentiators: form.differentiators.trim() || null,
         notes: form.notes.trim() || null,
         logo_path,
+        reference_images: finalReferenceImages,
       };
 
       if (editing) {
@@ -372,6 +384,50 @@ export default function ProfilesClient({
                   type="file"
                   accept="image/*"
                   onChange={(e) => setLogoFile(e.target.files?.[0] ?? null)}
+                  className="w-full text-xs"
+                />
+              </div>
+
+              <div>
+                <label className="mb-1 block text-xs font-medium text-neutral-600">
+                  Prints de modelos de arte / referências visuais
+                </label>
+                <p className="mb-2 text-[11px] text-neutral-400">
+                  Anexe exemplos do estilo de arte que você gosta para esse
+                  perfil — a IA usa essas referências para gerar artes
+                  parecidas.
+                </p>
+                {referenceImages.length > 0 && (
+                  <div className="mb-2 grid grid-cols-4 gap-2">
+                    {referenceImages.map((path) => (
+                      <div key={path} className="relative">
+                        <MediaThumb
+                          path={path}
+                          alt="Referência de arte"
+                          className="h-16 w-full rounded-md object-cover"
+                        />
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setReferenceImages((prev) =>
+                              prev.filter((p) => p !== path),
+                            )
+                          }
+                          className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-white text-[10px] text-red-500 shadow"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={(e) =>
+                    setNewReferenceFiles(Array.from(e.target.files ?? []))
+                  }
                   className="w-full text-xs"
                 />
               </div>

@@ -17,6 +17,7 @@ export interface BrandProfile {
   differentiators: string | null;
   notes: string | null;
   logo_path: string | null;
+  reference_images: string[];
   archived: boolean;
   created_at: string;
 }

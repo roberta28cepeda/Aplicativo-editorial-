@@ -1,23 +1,31 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { generateImagePng } from "@/lib/ai/openaiImage";
+import {
+  generateImageFromReferencePng,
+  generateImagePng,
+} from "@/lib/ai/openaiImage";
 import type { BrandProfile } from "@/types/db";
 
 function buildImagePrompt(
   title: string,
   notes: string | null,
   profile: BrandProfile | null,
+  hasReference: boolean,
 ) {
   const colors = profile?.brand_colors.length
     ? `Paleta de cores predominante: ${profile.brand_colors.join(", ")}.`
     : "";
   const niche = profile?.niche ? `Nicho/segmento: ${profile.niche}.` : "";
+  const referenceInstruction = hasReference
+    ? "Use a imagem anexada como referência de estilo visual (composição, paleta, clima) e crie uma nova arte no mesmo estilo, adaptada para este conceito específico — não copie o conteúdo da imagem, só o estilo."
+    : "";
 
   return `Crie uma arte visual limpa e moderna para redes sociais (estilo post de Instagram/LinkedIn), sem nenhum texto legível na imagem — foco puramente visual/conceitual, pois o texto será adicionado depois por fora.
 
 Conceito do post: "${title}"${notes ? ` — ${notes}` : ""}
 ${niche}
 ${colors}
+${referenceInstruction}
 
 Estilo: fotografia ou ilustração profissional, composição limpa, boa área negativa para eventual sobreposição de texto depois, sem marcas d'água, sem letras ou palavras na imagem.`;
 }
@@ -69,11 +77,33 @@ export async function POST(request: Request) {
   }
 
   const captionOrNotes = target === "idea" ? record.notes : record.caption;
+  const referencePath = profile?.reference_images?.[0] ?? null;
 
   let imageBuffer;
   try {
-    const prompt = buildImagePrompt(record.title, captionOrNotes, profile);
-    imageBuffer = await generateImagePng(prompt);
+    let referenceBuffer: Buffer | null = null;
+    if (referencePath) {
+      const { data: refBlob, error: refError } = await supabase.storage
+        .from("editorial-media")
+        .download(referencePath);
+      if (!refError && refBlob) {
+        referenceBuffer = Buffer.from(await refBlob.arrayBuffer());
+      }
+    }
+
+    const prompt = buildImagePrompt(
+      record.title,
+      captionOrNotes,
+      profile,
+      !!referenceBuffer,
+    );
+
+    imageBuffer = referenceBuffer
+      ? await generateImageFromReferencePng(prompt, {
+          buffer: referenceBuffer,
+          mimeType: "image/png",
+        })
+      : await generateImagePng(prompt);
   } catch (err) {
     return NextResponse.json(
       {
