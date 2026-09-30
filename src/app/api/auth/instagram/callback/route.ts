@@ -50,12 +50,15 @@ export async function GET(request: Request) {
     const { accessToken: longLivedToken, expiresIn } =
       await exchangeForLongLivedToken(shortLivedToken);
 
-    const accounts = await fetchConnectedInstagramAccounts(longLivedToken);
+    const { accounts, pagesFound } =
+      await fetchConnectedInstagramAccounts(longLivedToken);
 
     if (accounts.length === 0) {
+      const detail = pagesFound.length
+        ? `Páginas encontradas: ${pagesFound.map((p) => p.name).join(", ")} — nenhuma tem Instagram Business vinculado.`
+        : "Nenhuma Página do Facebook foi encontrada para esse login.";
       return redirectTo({
-        error:
-          "Login feito, mas nenhuma conta de Instagram Business foi encontrada nas suas Páginas do Facebook.",
+        error: `Login feito, mas nenhuma conta de Instagram Business foi encontrada. ${detail}`,
       });
     }
 

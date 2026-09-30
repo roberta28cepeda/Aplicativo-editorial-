@@ -85,9 +85,14 @@ export interface ConnectedInstagramAccount {
   profilePictureUrl: string | null;
 }
 
+export interface FetchAccountsResult {
+  accounts: ConnectedInstagramAccount[];
+  pagesFound: { id: string; name: string; hasInstagram: boolean }[];
+}
+
 export async function fetchConnectedInstagramAccounts(
   userAccessToken: string,
-): Promise<ConnectedInstagramAccount[]> {
+): Promise<FetchAccountsResult> {
   const pagesResponse = await graphGet("/me/accounts", {
     access_token: userAccessToken,
     fields: "id,name,access_token",
@@ -100,6 +105,7 @@ export async function fetchConnectedInstagramAccounts(
   }[];
 
   const accounts: ConnectedInstagramAccount[] = [];
+  const pagesFound: { id: string; name: string; hasInstagram: boolean }[] = [];
 
   for (const page of pages) {
     try {
@@ -109,6 +115,8 @@ export async function fetchConnectedInstagramAccounts(
       });
 
       const igAccount = pageDetails.instagram_business_account;
+      pagesFound.push({ id: page.id, name: page.name, hasInstagram: !!igAccount?.id });
+
       if (igAccount?.id) {
         accounts.push({
           pageId: page.id,
@@ -120,9 +128,9 @@ export async function fetchConnectedInstagramAccounts(
         });
       }
     } catch {
-      // Página sem Instagram Business vinculado ou sem permissão; ignora.
+      pagesFound.push({ id: page.id, name: page.name, hasInstagram: false });
     }
   }
 
-  return accounts;
+  return { accounts, pagesFound };
 }
