@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import type { BrandProfile, SocialConnection } from "@/types/db";
 
@@ -19,8 +19,40 @@ export default function ConexoesClient({
   const searchParams = useSearchParams();
   const error = searchParams.get("error");
   const connectedCount = searchParams.get("connected");
+  const router = useRouter();
 
   const instagramProfiles = profiles.filter((p) => p.platform === "instagram");
+
+  const [showManual, setShowManual] = useState(false);
+  const [manualToken, setManualToken] = useState("");
+  const [manualSaving, setManualSaving] = useState(false);
+  const [manualError, setManualError] = useState<string | null>(null);
+  const [manualSuccess, setManualSuccess] = useState<string | null>(null);
+
+  async function handleManualConnect(e: React.FormEvent) {
+    e.preventDefault();
+    setManualSaving(true);
+    setManualError(null);
+    setManualSuccess(null);
+    try {
+      const res = await fetch("/api/auth/instagram/manual", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ access_token: manualToken.trim() }),
+      });
+      const body = await res.json();
+      if (!res.ok) throw new Error(body.error ?? "Falha ao conectar.");
+      setManualSuccess(
+        `${body.connected} conta(s) conectada(s)! Atualizando a lista...`,
+      );
+      setManualToken("");
+      router.refresh();
+    } catch (err) {
+      setManualError(err instanceof Error ? err.message : "Falha ao conectar.");
+    } finally {
+      setManualSaving(false);
+    }
+  }
 
   async function handleAssign(connectionId: string, brandProfileId: string) {
     const supabase = createClient();
@@ -97,10 +129,78 @@ export default function ConexoesClient({
 
       <a
         href="/api/auth/instagram/start"
-        className="mb-6 inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-pink-500 to-amber-500 px-4 py-2 text-sm font-medium text-white hover:opacity-90"
+        className="mb-3 inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-pink-500 to-amber-500 px-4 py-2 text-sm font-medium text-white hover:opacity-90"
       >
         📷 Conectar com Instagram
       </a>
+
+      <div className="mb-6">
+        <button
+          onClick={() => setShowManual((v) => !v)}
+          className="text-xs text-neutral-500 underline hover:text-neutral-700"
+        >
+          {showManual
+            ? "Esconder"
+            : "O login automático não achou sua conta? Conectar com um token manual"}
+        </button>
+
+        {showManual && (
+          <div className="mt-3 rounded-lg border border-neutral-200 bg-white p-4">
+            <p className="mb-2 text-xs text-neutral-600">
+              Gere um token direto no{" "}
+              <a
+                href="https://developers.facebook.com/tools/explorer/"
+                target="_blank"
+                rel="noreferrer"
+                className="text-blue-600 underline"
+              >
+                Graph API Explorer
+              </a>{" "}
+              da Meta:
+            </p>
+            <ol className="mb-3 list-decimal space-y-1 pl-4 text-xs text-neutral-600">
+              <li>
+                Selecione o app <strong>&quot;Calendario Editorial app&quot;</strong> no
+                menu &quot;Meta App&quot; no topo
+              </li>
+              <li>
+                No menu &quot;User or Page&quot;, escolha a{" "}
+                <strong>Página</strong> certa (ex: Leactis, leactis.consultoria)
+              </li>
+              <li>
+                Em &quot;Add a permission&quot;, adicione: <code>pages_show_list</code>,{" "}
+                <code>pages_read_engagement</code>, <code>instagram_basic</code>
+              </li>
+              <li>
+                Clique em <strong>&quot;Generate Access Token&quot;</strong> e autorize
+              </li>
+              <li>Copie o token gerado e cole abaixo</li>
+            </ol>
+            <form onSubmit={handleManualConnect} className="flex gap-2">
+              <input
+                value={manualToken}
+                onChange={(e) => setManualToken(e.target.value)}
+                placeholder="Cole o token de acesso aqui"
+                required
+                className="flex-1 rounded-md border border-neutral-300 px-3 py-2 text-xs outline-none focus:border-neutral-500"
+              />
+              <button
+                type="submit"
+                disabled={manualSaving}
+                className="rounded-md bg-neutral-900 px-3 py-2 text-xs font-medium text-white hover:bg-neutral-700 disabled:opacity-50"
+              >
+                {manualSaving ? "Conectando..." : "Conectar"}
+              </button>
+            </form>
+            {manualError && (
+              <p className="mt-2 text-xs text-red-600">{manualError}</p>
+            )}
+            {manualSuccess && (
+              <p className="mt-2 text-xs text-green-600">{manualSuccess}</p>
+            )}
+          </div>
+        )}
+      </div>
 
       <h2 className="mb-2 text-sm font-semibold text-neutral-700">
         Contas conectadas ({connections.length})
