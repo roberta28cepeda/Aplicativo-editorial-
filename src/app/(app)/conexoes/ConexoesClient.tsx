@@ -101,7 +101,7 @@ export default function ConexoesClient({
     <div className="mx-auto max-w-3xl px-4 py-6">
       <div className="mb-5">
         <h1 className="text-xl font-semibold">Conexões</h1>
-        <p className="text-sm text-neutral-500">
+        <p className="text-sm text-ink-soft">
           Conecte suas contas do Instagram Business de verdade (login oficial
           da Meta) para eu poder ler os dados de desempenho delas.
         </p>
@@ -137,7 +137,7 @@ export default function ConexoesClient({
       <div className="mb-6">
         <button
           onClick={() => setShowManual((v) => !v)}
-          className="text-xs text-neutral-500 underline hover:text-neutral-700"
+          className="text-xs text-ink-soft underline hover:text-ink-soft"
         >
           {showManual
             ? "Esconder"
@@ -145,8 +145,8 @@ export default function ConexoesClient({
         </button>
 
         {showManual && (
-          <div className="mt-3 rounded-lg border border-neutral-200 bg-white p-4">
-            <p className="mb-2 text-xs text-neutral-600">
+          <div className="mt-3 rounded-lg border border-line bg-cream p-4">
+            <p className="mb-2 text-xs text-ink-soft">
               Gere um token direto no{" "}
               <a
                 href="https://developers.facebook.com/tools/explorer/"
@@ -158,7 +158,7 @@ export default function ConexoesClient({
               </a>{" "}
               da Meta:
             </p>
-            <ol className="mb-3 list-decimal space-y-1 pl-4 text-xs text-neutral-600">
+            <ol className="mb-3 list-decimal space-y-1 pl-4 text-xs text-ink-soft">
               <li>
                 Selecione o app <strong>&quot;Calendario Editorial app&quot;</strong> no
                 menu &quot;Meta App&quot; no topo
@@ -182,12 +182,12 @@ export default function ConexoesClient({
                 onChange={(e) => setManualToken(e.target.value)}
                 placeholder="Cole o token de acesso aqui"
                 required
-                className="flex-1 rounded-md border border-neutral-300 px-3 py-2 text-xs outline-none focus:border-neutral-500"
+                className="flex-1 rounded-md border border-line px-3 py-2 text-xs outline-none focus:border-orange"
               />
               <button
                 type="submit"
                 disabled={manualSaving}
-                className="rounded-md bg-neutral-900 px-3 py-2 text-xs font-medium text-white hover:bg-neutral-700 disabled:opacity-50"
+                className="rounded-md bg-orange px-3 py-2 text-xs font-medium text-white hover:bg-orange-deep disabled:opacity-50"
               >
                 {manualSaving ? "Conectando..." : "Conectar"}
               </button>
@@ -202,12 +202,12 @@ export default function ConexoesClient({
         )}
       </div>
 
-      <h2 className="mb-2 text-sm font-semibold text-neutral-700">
+      <h2 className="mb-2 text-sm font-semibold text-ink-soft">
         Contas conectadas ({connections.length})
       </h2>
 
       {connections.length === 0 ? (
-        <p className="text-xs text-neutral-400">
+        <p className="text-xs text-[#a09b8f]">
           Nenhuma conta conectada ainda.
         </p>
       ) : (
@@ -215,7 +215,7 @@ export default function ConexoesClient({
           {connections.map((conn) => (
             <div
               key={conn.id}
-              className="flex items-center gap-3 rounded-lg border border-neutral-200 bg-white p-3"
+              className="flex items-center gap-3 rounded-lg border border-line bg-cream p-3"
             >
               {conn.profile_picture_url ? (
                 // eslint-disable-next-line @next/next/no-img-element
@@ -225,7 +225,7 @@ export default function ConexoesClient({
                   className="h-10 w-10 shrink-0 rounded-full object-cover"
                 />
               ) : (
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-neutral-100 text-xs text-neutral-400">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-paper-deep text-xs text-[#a09b8f]">
                   IG
                 </div>
               )}
@@ -233,7 +233,7 @@ export default function ConexoesClient({
                 <p className="truncate text-sm font-medium">
                   @{conn.external_username ?? conn.external_account_id}
                 </p>
-                <p className="text-xs text-neutral-400">
+                <p className="text-xs text-[#a09b8f]">
                   conectado em{" "}
                   {new Date(conn.connected_at).toLocaleDateString("pt-BR")}
                 </p>
@@ -241,7 +241,7 @@ export default function ConexoesClient({
               <select
                 value={conn.brand_profile_id ?? ""}
                 onChange={(e) => handleAssign(conn.id, e.target.value)}
-                className="rounded-md border border-neutral-300 px-2 py-1.5 text-xs outline-none focus:border-neutral-500"
+                className="rounded-md border border-line px-2 py-1.5 text-xs outline-none focus:border-orange"
               >
                 <option value="">Vincular a um perfil...</option>
                 {instagramProfiles.map((p) => (
@@ -252,7 +252,7 @@ export default function ConexoesClient({
               </select>
               <button
                 onClick={() => handleDisconnect(conn)}
-                className="rounded-md border border-neutral-200 px-2 py-1.5 text-xs text-red-500 hover:bg-red-50"
+                className="rounded-md border border-line px-2 py-1.5 text-xs text-red-500 hover:bg-red-50"
               >
                 Desconectar
               </button>

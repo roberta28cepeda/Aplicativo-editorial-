@@ -158,29 +158,29 @@ export default function CalendarClient({
           <div className="flex items-center gap-1">
             <button
               onClick={() => changeMonth(-1)}
-              className="rounded-md border border-neutral-200 px-2 py-1 text-sm hover:bg-neutral-100"
+              className="rounded-md border border-line px-2 py-1 text-sm hover:bg-paper-deep"
             >
               ‹
             </button>
             <button
               onClick={() => setMonthStart(startOfMonth(new Date()))}
-              className="rounded-md border border-neutral-200 px-2 py-1 text-xs hover:bg-neutral-100"
+              className="rounded-md border border-line px-2 py-1 text-xs hover:bg-paper-deep"
             >
               Hoje
             </button>
             <button
               onClick={() => changeMonth(1)}
-              className="rounded-md border border-neutral-200 px-2 py-1 text-sm hover:bg-neutral-100"
+              className="rounded-md border border-line px-2 py-1 text-sm hover:bg-paper-deep"
             >
               ›
             </button>
-            <div className="ml-2 flex overflow-hidden rounded-md border border-neutral-200">
+            <div className="ml-2 flex overflow-hidden rounded-md border border-line">
               <button
                 onClick={() => setViewMode("month")}
                 className={`px-3 py-1 text-xs font-medium ${
                   viewMode === "month"
-                    ? "bg-neutral-900 text-white"
-                    : "bg-white text-neutral-600 hover:bg-neutral-100"
+                    ? "bg-orange text-white"
+                    : "bg-cream text-ink-soft hover:bg-paper-deep"
                 }`}
               >
                 Mês
@@ -189,8 +189,8 @@ export default function CalendarClient({
                 onClick={() => setViewMode("list")}
                 className={`px-3 py-1 text-xs font-medium ${
                   viewMode === "list"
-                    ? "bg-neutral-900 text-white"
-                    : "bg-white text-neutral-600 hover:bg-neutral-100"
+                    ? "bg-orange text-white"
+                    : "bg-cream text-ink-soft hover:bg-paper-deep"
                 }`}
               >
                 Lista
@@ -205,8 +205,8 @@ export default function CalendarClient({
               onClick={() => setProfileFilter("all")}
               className={`rounded-md px-3 py-1.5 text-xs font-medium transition ${
                 profileFilter === "all"
-                  ? "bg-neutral-900 text-white"
-                  : "bg-white text-neutral-600 hover:bg-neutral-100"
+                  ? "bg-orange text-white"
+                  : "bg-cream text-ink-soft hover:bg-paper-deep"
               }`}
             >
               Todos os perfis
@@ -217,8 +217,8 @@ export default function CalendarClient({
                 onClick={() => setProfileFilter(p.id)}
                 className={`rounded-md px-3 py-1.5 text-xs font-medium transition ${
                   profileFilter === p.id
-                    ? "bg-neutral-900 text-white"
-                    : "bg-white text-neutral-600 hover:bg-neutral-100"
+                    ? "bg-orange text-white"
+                    : "bg-cream text-ink-soft hover:bg-paper-deep"
                 }`}
               >
                 {p.name}
@@ -228,9 +228,9 @@ export default function CalendarClient({
         )}
 
         {viewMode === "list" ? (
-          <div className="overflow-hidden rounded-lg border border-neutral-200 bg-white">
+          <div className="overflow-hidden rounded-lg border border-line bg-cream">
             {monthPostsList.length === 0 ? (
-              <p className="p-6 text-center text-sm text-neutral-400">
+              <p className="p-6 text-center text-sm text-[#a09b8f]">
                 Nenhum post com data marcada neste mês.
               </p>
             ) : (
@@ -238,19 +238,19 @@ export default function CalendarClient({
                 <button
                   key={post.id}
                   onClick={() => openEditPost(post)}
-                  className="flex w-full items-center justify-between gap-3 border-b border-neutral-100 p-3 text-left last:border-b-0 hover:bg-neutral-50"
+                  className="flex w-full items-center justify-between gap-3 border-b border-line p-3 text-left last:border-b-0 hover:bg-paper-deep"
                 >
-                  <div className="w-14 shrink-0 text-xs font-medium text-neutral-500">
+                  <div className="w-14 shrink-0 text-xs font-medium text-ink-soft">
                     {post.scheduled_date?.slice(8, 10)}/
                     {post.scheduled_date?.slice(5, 7)}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-neutral-800">
+                    <p className="truncate text-sm font-medium text-ink">
                       {post.title}
                     </p>
                     {post.brand_profile_id &&
                       profileById.get(post.brand_profile_id) && (
-                        <p className="text-xs text-neutral-400">
+                        <p className="text-xs text-[#a09b8f]">
                           {profileById.get(post.brand_profile_id)!.name}
                         </p>
                       )}
@@ -265,11 +265,11 @@ export default function CalendarClient({
             )}
           </div>
         ) : (
-        <div className="grid grid-cols-7 overflow-hidden rounded-lg border border-neutral-200 bg-white">
+        <div className="grid grid-cols-7 overflow-hidden rounded-lg border border-line bg-cream">
           {WEEKDAYS.map((day) => (
             <div
               key={day}
-              className="border-b border-neutral-200 bg-neutral-50 px-2 py-1.5 text-center text-xs font-medium text-neutral-500"
+              className="border-b border-line bg-paper-deep px-2 py-1.5 text-center text-xs font-medium text-ink-soft"
             >
               {day}
             </div>
@@ -283,17 +283,17 @@ export default function CalendarClient({
             return (
               <div
                 key={iso}
-                className={`group relative min-h-[100px] border-b border-r border-neutral-100 p-1.5 last:border-r-0 ${
-                  isCurrentMonth ? "bg-white" : "bg-neutral-50"
+                className={`group relative min-h-[100px] border-b border-r border-line p-1.5 last:border-r-0 ${
+                  isCurrentMonth ? "bg-cream" : "bg-paper-deep"
                 }`}
               >
                 <div className="mb-1 flex items-center justify-between">
                   <span
                     className={`text-xs ${
                       iso === today
-                        ? "flex h-5 w-5 items-center justify-center rounded-full bg-neutral-900 font-semibold text-white"
+                        ? "flex h-5 w-5 items-center justify-center rounded-full bg-orange font-semibold text-white"
                         : isCurrentMonth
-                          ? "text-neutral-600"
+                          ? "text-ink-soft"
                           : "text-neutral-300"
                     }`}
                   >
@@ -301,7 +301,7 @@ export default function CalendarClient({
                   </span>
                   <button
                     onClick={() => openNewPost(iso)}
-                    className="hidden rounded px-1 text-xs text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700 group-hover:block"
+                    className="hidden rounded px-1 text-xs text-[#a09b8f] hover:bg-paper-deep hover:text-ink-soft group-hover:block"
                   >
                     +
                   </button>
@@ -327,12 +327,12 @@ export default function CalendarClient({
       </div>
 
       <aside className="w-full shrink-0 lg:w-64">
-        <h2 className="mb-2 text-sm font-semibold text-neutral-700">
+        <h2 className="mb-2 text-sm font-semibold text-ink-soft">
           Sem data definida ({unscheduled.length})
         </h2>
         <div className="flex flex-col gap-2">
           {unscheduled.length === 0 && (
-            <p className="text-xs text-neutral-400">
+            <p className="text-xs text-[#a09b8f]">
               Tudo por aqui já tem uma data marcada.
             </p>
           )}
@@ -340,7 +340,7 @@ export default function CalendarClient({
             <button
               key={post.id}
               onClick={() => openEditPost(post)}
-              className="rounded-md border border-neutral-200 bg-white p-2 text-left hover:border-neutral-400"
+              className="rounded-md border border-line bg-cream p-2 text-left hover:border-neutral-400"
             >
               <p className="truncate text-xs font-medium">{post.title}</p>
               <span
@@ -354,7 +354,7 @@ export default function CalendarClient({
 
         <button
           onClick={() => openNewPost(today)}
-          className="mt-4 w-full rounded-md border border-dashed border-neutral-300 px-3 py-2 text-xs font-medium text-neutral-500 hover:border-neutral-400 hover:text-neutral-700"
+          className="mt-4 w-full rounded-md border border-dashed border-line px-3 py-2 text-xs font-medium text-ink-soft hover:border-neutral-400 hover:text-ink-soft"
         >
           + Novo post
         </button>

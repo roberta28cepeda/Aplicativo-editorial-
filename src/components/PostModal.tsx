@@ -169,14 +169,14 @@ export default function PostModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-      <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-xl bg-white p-5 shadow-lg">
+      <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-xl bg-cream p-5 shadow-lg">
         <div className="mb-3 flex items-center justify-between">
           <h2 className="text-base font-semibold">
             {post ? "Editar post" : "Novo post"}
           </h2>
           <button
             onClick={onClose}
-            className="text-neutral-400 hover:text-neutral-700"
+            className="text-[#a09b8f] hover:text-ink-soft"
           >
             ✕
           </button>
@@ -184,25 +184,25 @@ export default function PostModal({
 
         <form onSubmit={handleSubmit} className="space-y-3">
           <div>
-            <label className="mb-1 block text-xs font-medium text-neutral-600">
+            <label className="mb-1 block text-xs font-medium text-ink-soft">
               Título
             </label>
             <input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-500"
+              className="w-full rounded-md border border-line px-3 py-2 text-sm outline-none focus:border-orange"
             />
           </div>
 
           {profiles.length > 0 && (
             <div>
-              <label className="mb-1 block text-xs font-medium text-neutral-600">
+              <label className="mb-1 block text-xs font-medium text-ink-soft">
                 Perfil / conta
               </label>
               <select
                 value={brandProfileId}
                 onChange={(e) => setBrandProfileId(e.target.value)}
-                className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-500"
+                className="w-full rounded-md border border-line px-3 py-2 text-sm outline-none focus:border-orange"
               >
                 <option value="">Sem perfil definido</option>
                 {profiles.map((p) => (
@@ -215,13 +215,13 @@ export default function PostModal({
           )}
 
           <div>
-            <label className="mb-1 block text-xs font-medium text-neutral-600">
+            <label className="mb-1 block text-xs font-medium text-ink-soft">
               Vincular a uma ideia (opcional)
             </label>
             <select
               value={ideaId}
               onChange={(e) => setIdeaId(e.target.value)}
-              className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-500"
+              className="w-full rounded-md border border-line px-3 py-2 text-sm outline-none focus:border-orange"
             >
               <option value="">Nenhuma</option>
               {ideas.map((idea) => (
@@ -234,24 +234,24 @@ export default function PostModal({
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="mb-1 block text-xs font-medium text-neutral-600">
+              <label className="mb-1 block text-xs font-medium text-ink-soft">
                 Data
               </label>
               <input
                 type="date"
                 value={scheduledDate}
                 onChange={(e) => setScheduledDate(e.target.value)}
-                className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-500"
+                className="w-full rounded-md border border-line px-3 py-2 text-sm outline-none focus:border-orange"
               />
             </div>
             <div>
-              <label className="mb-1 block text-xs font-medium text-neutral-600">
+              <label className="mb-1 block text-xs font-medium text-ink-soft">
                 Status
               </label>
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value as PostStatus)}
-                className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-500"
+                className="w-full rounded-md border border-line px-3 py-2 text-sm outline-none focus:border-orange"
               >
                 {Object.entries(POST_STATUS_LABEL).map(([value, label]) => (
                   <option key={value} value={value}>
@@ -264,13 +264,13 @@ export default function PostModal({
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="mb-1 block text-xs font-medium text-neutral-600">
+              <label className="mb-1 block text-xs font-medium text-ink-soft">
                 Plataforma
               </label>
               <select
                 value={platform}
                 onChange={(e) => setPlatform(e.target.value as Platform)}
-                className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-500"
+                className="w-full rounded-md border border-line px-3 py-2 text-sm outline-none focus:border-orange"
               >
                 {Object.entries(PLATFORM_LABEL).map(([value, label]) => (
                   <option key={value} value={value}>
@@ -280,13 +280,13 @@ export default function PostModal({
               </select>
             </div>
             <div>
-              <label className="mb-1 block text-xs font-medium text-neutral-600">
+              <label className="mb-1 block text-xs font-medium text-ink-soft">
                 Formato
               </label>
               <select
                 value={postType}
                 onChange={(e) => setPostType(e.target.value as PostType)}
-                className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-500"
+                className="w-full rounded-md border border-line px-3 py-2 text-sm outline-none focus:border-orange"
               >
                 {Object.entries(POST_TYPE_LABEL).map(([value, label]) => (
                   <option key={value} value={value}>
@@ -298,31 +298,31 @@ export default function PostModal({
           </div>
 
           <div>
-            <label className="mb-1 block text-xs font-medium text-neutral-600">
+            <label className="mb-1 block text-xs font-medium text-ink-soft">
               Legenda
             </label>
             <textarea
               value={caption}
               onChange={(e) => setCaption(e.target.value)}
               rows={3}
-              className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-500"
+              className="w-full rounded-md border border-line px-3 py-2 text-sm outline-none focus:border-orange"
             />
           </div>
 
           <div>
-            <label className="mb-1 block text-xs font-medium text-neutral-600">
+            <label className="mb-1 block text-xs font-medium text-ink-soft">
               Tags (separadas por vírgula)
             </label>
             <input
               value={tagsInput}
               onChange={(e) => setTagsInput(e.target.value)}
-              className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-500"
+              className="w-full rounded-md border border-line px-3 py-2 text-sm outline-none focus:border-orange"
             />
           </div>
 
           <div>
             <div className="mb-1 flex items-center justify-between">
-              <label className="block text-xs font-medium text-neutral-600">
+              <label className="block text-xs font-medium text-ink-soft">
                 Arte do post
               </label>
               {post && (
@@ -356,13 +356,13 @@ export default function PostModal({
 
           {post && (status === "posted" || post.status === "posted") && (
             <div>
-              <label className="mb-1 block text-xs font-medium text-neutral-600">
+              <label className="mb-1 block text-xs font-medium text-ink-soft">
                 Desempenho (preencha depois de publicar)
               </label>
               <div className="grid grid-cols-3 gap-2">
                 {METRIC_FIELDS.map((field) => (
                   <div key={field.key}>
-                    <label className="mb-0.5 block text-[10px] text-neutral-500">
+                    <label className="mb-0.5 block text-[10px] text-ink-soft">
                       {field.label}
                     </label>
                     <input
@@ -375,7 +375,7 @@ export default function PostModal({
                           [field.key as string]: e.target.value,
                         })
                       }
-                      className="w-full rounded-md border border-neutral-300 px-2 py-1.5 text-sm outline-none focus:border-neutral-500"
+                      className="w-full rounded-md border border-line px-2 py-1.5 text-sm outline-none focus:border-orange"
                     />
                   </div>
                 ))}
@@ -387,7 +387,7 @@ export default function PostModal({
             <button
               type="submit"
               disabled={saving}
-              className="flex-1 rounded-md bg-neutral-900 px-3 py-2 text-sm font-medium text-white hover:bg-neutral-700 disabled:opacity-50"
+              className="flex-1 rounded-md bg-orange px-3 py-2 text-sm font-medium text-white hover:bg-orange-deep disabled:opacity-50"
             >
               {saving ? "Salvando..." : "Salvar"}
             </button>

@@ -33,7 +33,7 @@ export default function MediaThumb({
   if (!path || !url) {
     return (
       <div
-        className={`flex items-center justify-center bg-neutral-100 text-neutral-400 ${className ?? ""}`}
+        className={`flex items-center justify-center bg-paper-deep text-[#a09b8f] ${className ?? ""}`}
       >
         <span className="text-xs">Sem imagem</span>
       </div>

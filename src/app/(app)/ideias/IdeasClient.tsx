@@ -228,13 +228,13 @@ export default function IdeasClient({
       <div className="mb-5 flex items-center justify-between">
         <div>
           <h1 className="text-xl font-semibold">Banco de ideias</h1>
-          <p className="text-sm text-neutral-500">
+          <p className="text-sm text-ink-soft">
             Salve posts do Instagram (link ou print) e outras inspirações aqui.
           </p>
         </div>
         <button
           onClick={() => setModalOpen(true)}
-          className="rounded-lg bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-700"
+          className="rounded-lg bg-orange px-4 py-2 text-sm font-medium text-white hover:bg-orange-deep"
         >
           + Nova ideia
         </button>
@@ -244,7 +244,7 @@ export default function IdeasClient({
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
         placeholder="Buscar por título, notas ou tag..."
-        className="mb-3 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-500"
+        className="mb-3 w-full rounded-md border border-line px-3 py-2 text-sm outline-none focus:border-orange"
       />
 
       <div className="mb-3 flex flex-wrap gap-1">
@@ -254,8 +254,8 @@ export default function IdeasClient({
             onClick={() => setFilter(f.key)}
             className={`rounded-md px-3 py-1.5 text-xs font-medium transition ${
               filter === f.key
-                ? "bg-neutral-900 text-white"
-                : "bg-white text-neutral-600 hover:bg-neutral-100"
+                ? "bg-orange text-white"
+                : "bg-cream text-ink-soft hover:bg-paper-deep"
             }`}
           >
             {f.label}
@@ -269,8 +269,8 @@ export default function IdeasClient({
             onClick={() => setProfileFilter("all")}
             className={`rounded-md px-3 py-1.5 text-xs font-medium transition ${
               profileFilter === "all"
-                ? "bg-neutral-900 text-white"
-                : "bg-white text-neutral-600 hover:bg-neutral-100"
+                ? "bg-orange text-white"
+                : "bg-cream text-ink-soft hover:bg-paper-deep"
             }`}
           >
             Todos os perfis
@@ -281,8 +281,8 @@ export default function IdeasClient({
               onClick={() => setProfileFilter(p.id)}
               className={`rounded-md px-3 py-1.5 text-xs font-medium transition ${
                 profileFilter === p.id
-                  ? "bg-neutral-900 text-white"
-                  : "bg-white text-neutral-600 hover:bg-neutral-100"
+                  ? "bg-orange text-white"
+                  : "bg-cream text-ink-soft hover:bg-paper-deep"
               }`}
             >
               {p.name}
@@ -303,7 +303,7 @@ export default function IdeasClient({
       )}
 
       {visibleIdeas.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-neutral-300 p-10 text-center text-sm text-neutral-500">
+        <div className="rounded-lg border border-dashed border-line p-10 text-center text-sm text-ink-soft">
           Nenhuma ideia aqui ainda. Clique em &quot;+ Nova ideia&quot; para
           colar um link do Instagram ou subir um print de um post salvo.
         </div>
@@ -312,7 +312,7 @@ export default function IdeasClient({
           {visibleIdeas.map((idea) => (
             <div
               key={idea.id}
-              className="flex flex-col overflow-hidden rounded-lg border border-neutral-200 bg-white"
+              className="flex flex-col overflow-hidden rounded-lg border border-line bg-cream"
             >
               <MediaThumb
                 path={idea.image_path}
@@ -330,7 +330,7 @@ export default function IdeasClient({
                         ✨ IA
                       </span>
                     )}
-                    <span className="rounded-full bg-neutral-100 px-2 py-0.5 text-[10px] font-medium text-neutral-600">
+                    <span className="rounded-full bg-paper-deep px-2 py-0.5 text-[10px] font-medium text-ink-soft">
                       {IDEA_STATUS_LABEL[idea.status]}
                     </span>
                   </div>
@@ -357,7 +357,7 @@ export default function IdeasClient({
                 )}
 
                 {idea.notes && (
-                  <p className="line-clamp-3 text-xs text-neutral-600">
+                  <p className="line-clamp-3 text-xs text-ink-soft">
                     {idea.notes}
                   </p>
                 )}
@@ -367,7 +367,7 @@ export default function IdeasClient({
                     {idea.tags.map((tag) => (
                       <span
                         key={tag}
-                        className="rounded-full bg-neutral-100 px-2 py-0.5 text-[10px] text-neutral-500"
+                        className="rounded-full bg-paper-deep px-2 py-0.5 text-[10px] text-ink-soft"
                       >
                         #{tag}
                       </span>
@@ -390,7 +390,7 @@ export default function IdeasClient({
                 <div className="mt-auto flex items-center gap-2 pt-2">
                   <button
                     onClick={() => handleUseInCalendar(idea)}
-                    className="flex-1 rounded-md bg-neutral-900 px-2 py-1.5 text-xs font-medium text-white hover:bg-neutral-700"
+                    className="flex-1 rounded-md bg-orange px-2 py-1.5 text-xs font-medium text-white hover:bg-orange-deep"
                   >
                     Usar no calendário
                   </button>
@@ -399,14 +399,14 @@ export default function IdeasClient({
                     title={
                       idea.status === "archived" ? "Desarquivar" : "Arquivar"
                     }
-                    className="rounded-md border border-neutral-200 px-2 py-1.5 text-xs text-neutral-600 hover:bg-neutral-50"
+                    className="rounded-md border border-line px-2 py-1.5 text-xs text-ink-soft hover:bg-paper-deep"
                   >
                     {idea.status === "archived" ? "↺" : "⤓"}
                   </button>
                   <button
                     onClick={() => handleDelete(idea)}
                     title="Excluir"
-                    className="rounded-md border border-neutral-200 px-2 py-1.5 text-xs text-red-500 hover:bg-red-50"
+                    className="rounded-md border border-line px-2 py-1.5 text-xs text-red-500 hover:bg-red-50"
                   >
                     ✕
                   </button>
@@ -419,7 +419,7 @@ export default function IdeasClient({
 
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-          <div className="w-full max-w-md rounded-xl bg-white p-5 shadow-lg">
+          <div className="w-full max-w-md rounded-xl bg-cream p-5 shadow-lg">
             <div className="mb-3 flex items-center justify-between">
               <h2 className="text-base font-semibold">Nova ideia</h2>
               <button
@@ -427,7 +427,7 @@ export default function IdeasClient({
                   setModalOpen(false);
                   resetForm();
                 }}
-                className="text-neutral-400 hover:text-neutral-700"
+                className="text-[#a09b8f] hover:text-ink-soft"
               >
                 ✕
               </button>
@@ -435,26 +435,26 @@ export default function IdeasClient({
 
             <form onSubmit={handleAddIdea} className="space-y-3">
               <div>
-                <label className="mb-1 block text-xs font-medium text-neutral-600">
+                <label className="mb-1 block text-xs font-medium text-ink-soft">
                   Título
                 </label>
                 <input
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="Ex: Reel de bastidores"
-                  className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-500"
+                  className="w-full rounded-md border border-line px-3 py-2 text-sm outline-none focus:border-orange"
                 />
               </div>
 
               {profiles.length > 0 && (
                 <div>
-                  <label className="mb-1 block text-xs font-medium text-neutral-600">
+                  <label className="mb-1 block text-xs font-medium text-ink-soft">
                     Perfil / conta
                   </label>
                   <select
                     value={brandProfileId}
                     onChange={(e) => setBrandProfileId(e.target.value)}
-                    className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-500"
+                    className="w-full rounded-md border border-line px-3 py-2 text-sm outline-none focus:border-orange"
                   >
                     <option value="">Sem perfil definido</option>
                     {profiles.map((p) => (
@@ -467,19 +467,19 @@ export default function IdeasClient({
               )}
 
               <div>
-                <label className="mb-1 block text-xs font-medium text-neutral-600">
+                <label className="mb-1 block text-xs font-medium text-ink-soft">
                   Link do post salvo (Instagram, etc.)
                 </label>
                 <input
                   value={sourceUrl}
                   onChange={(e) => setSourceUrl(e.target.value)}
                   placeholder="https://www.instagram.com/p/..."
-                  className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-500"
+                  className="w-full rounded-md border border-line px-3 py-2 text-sm outline-none focus:border-orange"
                 />
               </div>
 
               <div>
-                <label className="mb-1 block text-xs font-medium text-neutral-600">
+                <label className="mb-1 block text-xs font-medium text-ink-soft">
                   Print / imagem de referência
                 </label>
                 <input
@@ -491,7 +491,7 @@ export default function IdeasClient({
               </div>
 
               <div>
-                <label className="mb-1 block text-xs font-medium text-neutral-600">
+                <label className="mb-1 block text-xs font-medium text-ink-soft">
                   Notas
                 </label>
                 <textarea
@@ -499,26 +499,26 @@ export default function IdeasClient({
                   onChange={(e) => setNotes(e.target.value)}
                   rows={3}
                   placeholder="Por que essa ideia é boa, como adaptar pro seu perfil..."
-                  className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-500"
+                  className="w-full rounded-md border border-line px-3 py-2 text-sm outline-none focus:border-orange"
                 />
               </div>
 
               <div>
-                <label className="mb-1 block text-xs font-medium text-neutral-600">
+                <label className="mb-1 block text-xs font-medium text-ink-soft">
                   Tags (separadas por vírgula)
                 </label>
                 <input
                   value={tagsInput}
                   onChange={(e) => setTagsInput(e.target.value)}
                   placeholder="reels, bastidores, engajamento"
-                  className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-500"
+                  className="w-full rounded-md border border-line px-3 py-2 text-sm outline-none focus:border-orange"
                 />
               </div>
 
               <button
                 type="submit"
                 disabled={saving}
-                className="w-full rounded-md bg-neutral-900 px-3 py-2 text-sm font-medium text-white hover:bg-neutral-700 disabled:opacity-50"
+                className="w-full rounded-md bg-orange px-3 py-2 text-sm font-medium text-white hover:bg-orange-deep disabled:opacity-50"
               >
                 {saving ? "Salvando..." : "Salvar ideia"}
               </button>

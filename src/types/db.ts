@@ -90,11 +90,11 @@ export const POST_STATUS_LABEL: Record<PostStatus, string> = {
 };
 
 export const POST_STATUS_COLOR: Record<PostStatus, string> = {
-  idea: "bg-neutral-200 text-neutral-700",
-  draft: "bg-blue-100 text-blue-700",
-  art_ready: "bg-purple-100 text-purple-700",
-  scheduled: "bg-amber-100 text-amber-800",
-  posted: "bg-green-100 text-green-700",
+  idea: "bg-[#e9e6df] text-[#777871]",
+  draft: "bg-[#ebe3ef] text-[#75617e]",
+  art_ready: "bg-[#e9e2ed] text-[#70607c]",
+  scheduled: "bg-[#f8dfd5] text-[#a85032]",
+  posted: "bg-[#e1ede3] text-[#58745d]",
 };
 
 export const POST_TYPE_LABEL: Record<PostType, string> = {
@@ -126,8 +126,8 @@ export const BRAND_PLATFORM_LABEL: Record<BrandPlatform, string> = {
 };
 
 export const BRAND_PLATFORM_COLOR: Record<BrandPlatform, string> = {
-  instagram: "bg-pink-100 text-pink-700",
-  linkedin: "bg-sky-100 text-sky-700",
-  google_business: "bg-yellow-100 text-yellow-800",
-  outro: "bg-neutral-200 text-neutral-700",
+  instagram: "bg-[#f8dfd5] text-[#a85032]",
+  linkedin: "bg-[#e9e2ed] text-[#70607c]",
+  google_business: "bg-[#f3e6c9] text-[#8a6a1e]",
+  outro: "bg-[#e9e6df] text-[#777871]",
 };

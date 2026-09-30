@@ -86,18 +86,18 @@ export default function DashboardClient({
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-xl font-semibold">Visão geral</h1>
-          <p className="text-sm text-neutral-500">Bem-vinda de volta, {userEmail}</p>
+          <p className="text-sm text-ink-soft">Bem-vinda de volta, {userEmail}</p>
         </div>
         <div className="flex gap-2">
           <Link
             href="/ideias"
-            className="rounded-lg border border-neutral-200 bg-white px-3 py-2 text-xs font-medium text-neutral-700 hover:bg-neutral-50"
+            className="rounded-lg border border-line bg-cream px-3 py-2 text-xs font-medium text-ink-soft hover:bg-paper-deep"
           >
             + Nova ideia
           </Link>
           <Link
             href="/calendario"
-            className="rounded-lg bg-neutral-900 px-3 py-2 text-xs font-medium text-white hover:bg-neutral-700"
+            className="rounded-lg bg-orange px-3 py-2 text-xs font-medium text-white hover:bg-orange-deep"
           >
             + Novo post
           </Link>
@@ -108,10 +108,10 @@ export default function DashboardClient({
         {stats.map((s) => (
           <div
             key={s.label}
-            className="rounded-xl border border-neutral-200 bg-white p-4"
+            className="rounded-xl border border-line bg-cream p-4"
           >
-            <p className="text-2xl font-semibold text-neutral-900">{s.value}</p>
-            <p className="text-xs text-neutral-500">{s.label}</p>
+            <p className="text-2xl font-semibold text-ink">{s.value}</p>
+            <p className="text-xs text-ink-soft">{s.label}</p>
           </div>
         ))}
       </div>
@@ -144,7 +144,7 @@ export default function DashboardClient({
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <div>
           <div className="mb-2 flex items-center justify-between">
-            <h2 className="text-sm font-semibold text-neutral-700">
+            <h2 className="text-sm font-semibold text-ink-soft">
               Próximos posts
             </h2>
             <Link
@@ -155,7 +155,7 @@ export default function DashboardClient({
             </Link>
           </div>
           {upcomingPosts.length === 0 ? (
-            <p className="rounded-lg border border-dashed border-neutral-300 p-4 text-xs text-neutral-400">
+            <p className="rounded-lg border border-dashed border-line p-4 text-xs text-[#a09b8f]">
               Nada agendado ainda. Crie um post no calendário.
             </p>
           ) : (
@@ -163,13 +163,13 @@ export default function DashboardClient({
               {upcomingPosts.map((post) => (
                 <div
                   key={post.id}
-                  className="flex items-center justify-between gap-2 rounded-lg border border-neutral-200 bg-white p-3"
+                  className="flex items-center justify-between gap-2 rounded-lg border border-line bg-cream p-3"
                 >
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-neutral-800">
+                    <p className="truncate text-sm font-medium text-ink">
                       {post.title}
                     </p>
-                    <p className="text-xs text-neutral-400">
+                    <p className="text-xs text-[#a09b8f]">
                       {post.scheduled_date}
                       {post.brand_profile_id &&
                         profileById.get(post.brand_profile_id) &&
@@ -189,7 +189,7 @@ export default function DashboardClient({
 
         <div>
           <div className="mb-2 flex items-center justify-between">
-            <h2 className="text-sm font-semibold text-neutral-700">
+            <h2 className="text-sm font-semibold text-ink-soft">
               Ideias recentes
             </h2>
             <Link href="/ideias" className="text-xs text-blue-600 hover:underline">
@@ -197,7 +197,7 @@ export default function DashboardClient({
             </Link>
           </div>
           {recentIdeas.length === 0 ? (
-            <p className="rounded-lg border border-dashed border-neutral-300 p-4 text-xs text-neutral-400">
+            <p className="rounded-lg border border-dashed border-line p-4 text-xs text-[#a09b8f]">
               Nenhuma ideia salva ainda.
             </p>
           ) : (
@@ -205,9 +205,9 @@ export default function DashboardClient({
               {recentIdeas.map((idea) => (
                 <div
                   key={idea.id}
-                  className="rounded-lg border border-neutral-200 bg-white p-3"
+                  className="rounded-lg border border-line bg-cream p-3"
                 >
-                  <p className="truncate text-sm font-medium text-neutral-800">
+                  <p className="truncate text-sm font-medium text-ink">
                     {idea.title}
                   </p>
                   {idea.brand_profile_id &&
@@ -227,7 +227,7 @@ export default function DashboardClient({
 
       {profiles.length > 0 && (
         <div className="mt-8">
-          <h2 className="mb-2 text-sm font-semibold text-neutral-700">Perfis</h2>
+          <h2 className="mb-2 text-sm font-semibold text-ink-soft">Perfis</h2>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
             {profiles.map((p) => {
               const profilePosts = posts.filter((post) => post.brand_profile_id === p.id);
@@ -236,7 +236,7 @@ export default function DashboardClient({
                 <Link
                   key={p.id}
                   href="/perfis"
-                  className="rounded-lg border border-neutral-200 bg-white p-3 hover:border-neutral-400"
+                  className="rounded-lg border border-line bg-cream p-3 hover:border-neutral-400"
                 >
                   <p className="truncate text-sm font-medium">{p.name}</p>
                   <span
@@ -244,7 +244,7 @@ export default function DashboardClient({
                   >
                     {p.platform}
                   </span>
-                  <p className="mt-2 text-[11px] text-neutral-400">
+                  <p className="mt-2 text-[11px] text-[#a09b8f]">
                     {profilePosts.length} posts · {profileIdeas.length} ideias
                   </p>
                 </Link>

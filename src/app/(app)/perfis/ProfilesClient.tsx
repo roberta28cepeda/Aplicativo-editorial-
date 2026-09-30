@@ -160,14 +160,14 @@ export default function ProfilesClient({
       <div className="mb-5 flex items-center justify-between">
         <div>
           <h1 className="text-xl font-semibold">Perfis de marca</h1>
-          <p className="text-sm text-neutral-500">
+          <p className="text-sm text-ink-soft">
             Cada conta (Instagram, LinkedIn, Google) fica separada aqui. Ideias
             e calendário nunca se misturam entre perfis.
           </p>
         </div>
         <button
           onClick={openNew}
-          className="rounded-lg bg-neutral-900 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-700"
+          className="rounded-lg bg-orange px-4 py-2 text-sm font-medium text-white hover:bg-orange-deep"
         >
           + Novo perfil
         </button>
@@ -175,18 +175,18 @@ export default function ProfilesClient({
 
       {(Object.keys(grouped) as BrandPlatform[]).map((platform) => (
         <div key={platform} className="mb-6">
-          <h2 className="mb-2 text-sm font-semibold text-neutral-700">
+          <h2 className="mb-2 text-sm font-semibold text-ink-soft">
             {BRAND_PLATFORM_LABEL[platform]} ({grouped[platform].length})
           </h2>
           {grouped[platform].length === 0 ? (
-            <p className="text-xs text-neutral-400">Nenhum perfil ainda.</p>
+            <p className="text-xs text-[#a09b8f]">Nenhum perfil ainda.</p>
           ) : (
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {grouped[platform].map((profile) => (
                 <button
                   key={profile.id}
                   onClick={() => openEdit(profile)}
-                  className="flex items-start gap-3 rounded-lg border border-neutral-200 bg-white p-3 text-left hover:border-neutral-400"
+                  className="flex items-start gap-3 rounded-lg border border-line bg-cream p-3 text-left hover:border-neutral-400"
                 >
                   <MediaThumb
                     path={profile.logo_path}
@@ -198,7 +198,7 @@ export default function ProfilesClient({
                       {profile.name}
                     </p>
                     {profile.handle && (
-                      <p className="truncate text-xs text-neutral-500">
+                      <p className="truncate text-xs text-ink-soft">
                         {profile.handle}
                       </p>
                     )}
@@ -217,14 +217,14 @@ export default function ProfilesClient({
 
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-          <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-xl bg-white p-5 shadow-lg">
+          <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-xl bg-cream p-5 shadow-lg">
             <div className="mb-3 flex items-center justify-between">
               <h2 className="text-base font-semibold">
                 {editing ? "Editar perfil" : "Novo perfil"}
               </h2>
               <button
                 onClick={() => setModalOpen(false)}
-                className="text-neutral-400 hover:text-neutral-700"
+                className="text-[#a09b8f] hover:text-ink-soft"
               >
                 ✕
               </button>
@@ -233,7 +233,7 @@ export default function ProfilesClient({
             <form onSubmit={handleSubmit} className="space-y-3">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="mb-1 block text-xs font-medium text-neutral-600">
+                  <label className="mb-1 block text-xs font-medium text-ink-soft">
                     Nome do perfil
                   </label>
                   <input
@@ -243,11 +243,11 @@ export default function ProfilesClient({
                       setForm({ ...form, name: e.target.value })
                     }
                     placeholder="Ex: Loja Aurora"
-                    className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-500"
+                    className="w-full rounded-md border border-line px-3 py-2 text-sm outline-none focus:border-orange"
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-xs font-medium text-neutral-600">
+                  <label className="mb-1 block text-xs font-medium text-ink-soft">
                     Plataforma
                   </label>
                   <select
@@ -258,7 +258,7 @@ export default function ProfilesClient({
                         platform: e.target.value as BrandPlatform,
                       })
                     }
-                    className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-500"
+                    className="w-full rounded-md border border-line px-3 py-2 text-sm outline-none focus:border-orange"
                   >
                     {Object.entries(BRAND_PLATFORM_LABEL).map(
                       ([value, label]) => (
@@ -272,7 +272,7 @@ export default function ProfilesClient({
               </div>
 
               <div>
-                <label className="mb-1 block text-xs font-medium text-neutral-600">
+                <label className="mb-1 block text-xs font-medium text-ink-soft">
                   @ / URL da conta
                 </label>
                 <input
@@ -281,12 +281,12 @@ export default function ProfilesClient({
                     setForm({ ...form, handle: e.target.value })
                   }
                   placeholder="@loja_aurora ou linkedin.com/company/aurora"
-                  className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-500"
+                  className="w-full rounded-md border border-line px-3 py-2 text-sm outline-none focus:border-orange"
                 />
               </div>
 
               <div>
-                <label className="mb-1 block text-xs font-medium text-neutral-600">
+                <label className="mb-1 block text-xs font-medium text-ink-soft">
                   Nicho / segmento
                 </label>
                 <input
@@ -295,12 +295,12 @@ export default function ProfilesClient({
                     setForm({ ...form, niche: e.target.value })
                   }
                   placeholder="Ex: moda feminina plus size"
-                  className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-500"
+                  className="w-full rounded-md border border-line px-3 py-2 text-sm outline-none focus:border-orange"
                 />
               </div>
 
               <div>
-                <label className="mb-1 block text-xs font-medium text-neutral-600">
+                <label className="mb-1 block text-xs font-medium text-ink-soft">
                   Tom de voz
                 </label>
                 <input
@@ -309,12 +309,12 @@ export default function ProfilesClient({
                     setForm({ ...form, tone_of_voice: e.target.value })
                   }
                   placeholder="Ex: descontraído, acolhedor, direto"
-                  className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-500"
+                  className="w-full rounded-md border border-line px-3 py-2 text-sm outline-none focus:border-orange"
                 />
               </div>
 
               <div>
-                <label className="mb-1 block text-xs font-medium text-neutral-600">
+                <label className="mb-1 block text-xs font-medium text-ink-soft">
                   Público-alvo
                 </label>
                 <input
@@ -323,12 +323,12 @@ export default function ProfilesClient({
                     setForm({ ...form, target_audience: e.target.value })
                   }
                   placeholder="Ex: mulheres 25-45, classe B, região sul"
-                  className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-500"
+                  className="w-full rounded-md border border-line px-3 py-2 text-sm outline-none focus:border-orange"
                 />
               </div>
 
               <div>
-                <label className="mb-1 block text-xs font-medium text-neutral-600">
+                <label className="mb-1 block text-xs font-medium text-ink-soft">
                   Cores da marca (separadas por vírgula)
                 </label>
                 <input
@@ -337,12 +337,12 @@ export default function ProfilesClient({
                     setForm({ ...form, brand_colors: e.target.value })
                   }
                   placeholder="#1a1a2e, #e94560, branco"
-                  className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-500"
+                  className="w-full rounded-md border border-line px-3 py-2 text-sm outline-none focus:border-orange"
                 />
               </div>
 
               <div>
-                <label className="mb-1 block text-xs font-medium text-neutral-600">
+                <label className="mb-1 block text-xs font-medium text-ink-soft">
                   Diferenciais / o que essa marca vende
                 </label>
                 <textarea
@@ -351,12 +351,12 @@ export default function ProfilesClient({
                     setForm({ ...form, differentiators: e.target.value })
                   }
                   rows={2}
-                  className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-500"
+                  className="w-full rounded-md border border-line px-3 py-2 text-sm outline-none focus:border-orange"
                 />
               </div>
 
               <div>
-                <label className="mb-1 block text-xs font-medium text-neutral-600">
+                <label className="mb-1 block text-xs font-medium text-ink-soft">
                   Notas gerais
                 </label>
                 <textarea
@@ -365,12 +365,12 @@ export default function ProfilesClient({
                     setForm({ ...form, notes: e.target.value })
                   }
                   rows={2}
-                  className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-500"
+                  className="w-full rounded-md border border-line px-3 py-2 text-sm outline-none focus:border-orange"
                 />
               </div>
 
               <div>
-                <label className="mb-1 block text-xs font-medium text-neutral-600">
+                <label className="mb-1 block text-xs font-medium text-ink-soft">
                   Logo (opcional)
                 </label>
                 {editing?.logo_path && (
@@ -389,10 +389,10 @@ export default function ProfilesClient({
               </div>
 
               <div>
-                <label className="mb-1 block text-xs font-medium text-neutral-600">
+                <label className="mb-1 block text-xs font-medium text-ink-soft">
                   Prints de modelos de arte / referências visuais
                 </label>
-                <p className="mb-2 text-[11px] text-neutral-400">
+                <p className="mb-2 text-[11px] text-[#a09b8f]">
                   Anexe exemplos do estilo de arte que você gosta para esse
                   perfil — a IA usa essas referências para gerar artes
                   parecidas.
@@ -413,7 +413,7 @@ export default function ProfilesClient({
                               prev.filter((p) => p !== path),
                             )
                           }
-                          className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-white text-[10px] text-red-500 shadow"
+                          className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-cream text-[10px] text-red-500 shadow"
                         >
                           ✕
                         </button>
@@ -436,7 +436,7 @@ export default function ProfilesClient({
                 <button
                   type="submit"
                   disabled={saving}
-                  className="flex-1 rounded-md bg-neutral-900 px-3 py-2 text-sm font-medium text-white hover:bg-neutral-700 disabled:opacity-50"
+                  className="flex-1 rounded-md bg-orange px-3 py-2 text-sm font-medium text-white hover:bg-orange-deep disabled:opacity-50"
                 >
                   {saving ? "Salvando..." : "Salvar"}
                 </button>
@@ -444,7 +444,7 @@ export default function ProfilesClient({
                   <button
                     type="button"
                     onClick={() => handleArchive(editing)}
-                    className="rounded-md border border-neutral-200 px-3 py-2 text-sm font-medium text-neutral-500 hover:bg-neutral-50"
+                    className="rounded-md border border-line px-3 py-2 text-sm font-medium text-ink-soft hover:bg-paper-deep"
                   >
                     Arquivar
                   </button>

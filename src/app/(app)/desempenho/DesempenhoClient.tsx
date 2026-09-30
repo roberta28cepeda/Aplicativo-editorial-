@@ -87,7 +87,7 @@ export default function DesempenhoClient({
 
   if (profiles.length === 0) {
     return (
-      <div className="mx-auto max-w-3xl px-4 py-10 text-center text-sm text-neutral-500">
+      <div className="mx-auto max-w-3xl px-4 py-10 text-center text-sm text-ink-soft">
         Cadastre pelo menos um perfil de marca em{" "}
         <a href="/perfis" className="text-blue-600 hover:underline">
           Perfis
@@ -101,7 +101,7 @@ export default function DesempenhoClient({
     <div className="mx-auto max-w-4xl px-4 py-6">
       <div className="mb-5">
         <h1 className="text-xl font-semibold">Desempenho</h1>
-        <p className="text-sm text-neutral-500">
+        <p className="text-sm text-ink-soft">
           Registre os números de posts já publicados e peça uma análise com
           sugestões de calendário e melhorias.
         </p>
@@ -117,8 +117,8 @@ export default function DesempenhoClient({
             }}
             className={`rounded-md px-3 py-1.5 text-xs font-medium transition ${
               selectedProfileId === p.id
-                ? "bg-neutral-900 text-white"
-                : "bg-white text-neutral-600 hover:bg-neutral-100"
+                ? "bg-orange text-white"
+                : "bg-cream text-ink-soft hover:bg-paper-deep"
             }`}
           >
             {p.name}
@@ -128,13 +128,13 @@ export default function DesempenhoClient({
 
       {selectedProfile && (
         <>
-          <div className="mb-4 flex items-center justify-between rounded-lg border border-neutral-200 bg-white p-3">
-            <div className="text-xs text-neutral-500">
-              <strong className="text-neutral-800">
+          <div className="mb-4 flex items-center justify-between rounded-lg border border-line bg-cream p-3">
+            <div className="text-xs text-ink-soft">
+              <strong className="text-ink">
                 {postedPosts.length}
               </strong>{" "}
               posts publicados registrados ·{" "}
-              <strong className="text-neutral-800">{upcomingCount}</strong>{" "}
+              <strong className="text-ink">{upcomingCount}</strong>{" "}
               posts planejados à frente
             </div>
             <button
@@ -155,7 +155,7 @@ export default function DesempenhoClient({
                   Análise
                 </h2>
                 {!lastResult && selectedProfile.last_analysis_at && (
-                  <span className="text-[10px] text-neutral-400">
+                  <span className="text-[10px] text-[#a09b8f]">
                     gerada em{" "}
                     {new Date(
                       selectedProfile.last_analysis_at,
@@ -179,19 +179,19 @@ export default function DesempenhoClient({
             </div>
           )}
 
-          <h2 className="mb-2 text-sm font-semibold text-neutral-700">
+          <h2 className="mb-2 text-sm font-semibold text-ink-soft">
             Posts publicados
           </h2>
           {postedPosts.length === 0 ? (
-            <p className="text-xs text-neutral-400">
+            <p className="text-xs text-[#a09b8f]">
               Nenhum post com status &quot;Publicado&quot; ainda para este
               perfil. Marque um post como publicado no calendário e volte
               aqui para registrar os números.
             </p>
           ) : (
-            <div className="overflow-hidden rounded-lg border border-neutral-200 bg-white">
+            <div className="overflow-hidden rounded-lg border border-line bg-cream">
               <table className="w-full text-left text-xs">
-                <thead className="bg-neutral-50 text-neutral-500">
+                <thead className="bg-paper-deep text-ink-soft">
                   <tr>
                     <th className="px-3 py-2 font-medium">Post</th>
                     <th className="px-3 py-2 font-medium">Data</th>
@@ -207,10 +207,10 @@ export default function DesempenhoClient({
                     <tr
                       key={post.id}
                       onClick={() => setEditingPost(post)}
-                      className="cursor-pointer border-t border-neutral-100 hover:bg-neutral-50"
+                      className="cursor-pointer border-t border-line hover:bg-paper-deep"
                     >
                       <td className="px-3 py-2">
-                        <span className="font-medium text-neutral-800">
+                        <span className="font-medium text-ink">
                           {post.title}
                         </span>
                         <span
@@ -219,11 +219,11 @@ export default function DesempenhoClient({
                           {POST_STATUS_LABEL[post.status]}
                         </span>
                       </td>
-                      <td className="px-3 py-2 text-neutral-500">
+                      <td className="px-3 py-2 text-ink-soft">
                         {post.scheduled_date ?? "—"}
                       </td>
                       {METRIC_FIELDS.map((f) => (
-                        <td key={f.key as string} className="px-3 py-2 text-neutral-600">
+                        <td key={f.key as string} className="px-3 py-2 text-ink-soft">
                           {(post[f.key] as number | null) ?? "—"}
                         </td>
                       ))}

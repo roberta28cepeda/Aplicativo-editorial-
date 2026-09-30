@@ -35,7 +35,7 @@ export default function LoginPage() {
     <div className="flex flex-1 items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <h1 className="mb-1 text-2xl font-semibold">Calendário Editorial</h1>
-        <p className="mb-6 text-sm text-neutral-500">
+        <p className="mb-6 text-sm text-ink-soft">
           Organize suas ideias de conteúdo e suas artes em um só lugar.
         </p>
 
@@ -52,12 +52,12 @@ export default function LoginPage() {
               placeholder="seu@email.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-500"
+              className="w-full rounded-lg border border-line px-3 py-2 text-sm outline-none focus:border-orange"
             />
             <button
               type="submit"
               disabled={status === "sending"}
-              className="w-full rounded-lg bg-neutral-900 px-3 py-2 text-sm font-medium text-white transition hover:bg-neutral-700 disabled:opacity-50"
+              className="w-full rounded-lg bg-orange px-3 py-2 text-sm font-medium text-white transition hover:bg-orange-deep disabled:opacity-50"
             >
               {status === "sending" ? "Enviando..." : "Entrar com link mágico"}
             </button>
