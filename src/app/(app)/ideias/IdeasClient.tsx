@@ -28,6 +28,7 @@ export default function IdeasClient({
   const [ideas, setIdeas] = useState<Idea[]>(initialIdeas);
   const [filter, setFilter] = useState<"all" | IdeaStatus>("all");
   const [profileFilter, setProfileFilter] = useState<"all" | string>("all");
+  const [searchQuery, setSearchQuery] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [generatingIdeas, setGeneratingIdeas] = useState(false);
@@ -49,13 +50,18 @@ export default function IdeasClient({
   }, [profiles]);
 
   const visibleIdeas = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
     return ideas.filter((i) => {
       if (filter !== "all" && i.status !== filter) return false;
       if (profileFilter !== "all" && i.brand_profile_id !== profileFilter)
         return false;
+      if (query) {
+        const haystack = `${i.title} ${i.notes ?? ""} ${i.tags.join(" ")}`.toLowerCase();
+        if (!haystack.includes(query)) return false;
+      }
       return true;
     });
-  }, [ideas, filter, profileFilter]);
+  }, [ideas, filter, profileFilter, searchQuery]);
 
   function resetForm() {
     setTitle("");
@@ -233,6 +239,13 @@ export default function IdeasClient({
           + Nova ideia
         </button>
       </div>
+
+      <input
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        placeholder="Buscar por título, notas ou tag..."
+        className="mb-3 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-neutral-500"
+      />
 
       <div className="mb-3 flex flex-wrap gap-1">
         {FILTERS.map((f) => (

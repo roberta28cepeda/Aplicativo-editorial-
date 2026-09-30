@@ -60,6 +60,7 @@ export default function CalendarClient({
 }) {
   const [posts, setPosts] = useState<Post[]>(initialPosts);
   const [profileFilter, setProfileFilter] = useState<"all" | string>("all");
+  const [viewMode, setViewMode] = useState<"month" | "list">("month");
   const [monthStart, setMonthStart] = useState(() => startOfMonth(new Date()));
   const [modalState, setModalState] = useState<{
     open: boolean;
@@ -90,6 +91,27 @@ export default function CalendarClient({
     () => filteredPosts.filter((p) => !p.scheduled_date),
     [filteredPosts],
   );
+
+  const profileById = useMemo(() => {
+    const map = new Map<string, BrandProfile>();
+    for (const p of profiles) map.set(p.id, p);
+    return map;
+  }, [profiles]);
+
+  const monthPostsList = useMemo(() => {
+    const monthEnd = new Date(monthStart);
+    monthEnd.setMonth(monthEnd.getMonth() + 1);
+    const monthEndIso = toISODate(monthEnd);
+    const monthStartIso = toISODate(monthStart);
+    return filteredPosts
+      .filter(
+        (p) =>
+          p.scheduled_date &&
+          p.scheduled_date >= monthStartIso &&
+          p.scheduled_date < monthEndIso,
+      )
+      .sort((a, b) => (a.scheduled_date ?? "").localeCompare(b.scheduled_date ?? ""));
+  }, [filteredPosts, monthStart]);
 
   function openNewPost(date: string) {
     setModalState({ open: true, post: null, defaultDate: date });
@@ -152,6 +174,28 @@ export default function CalendarClient({
             >
               ›
             </button>
+            <div className="ml-2 flex overflow-hidden rounded-md border border-neutral-200">
+              <button
+                onClick={() => setViewMode("month")}
+                className={`px-3 py-1 text-xs font-medium ${
+                  viewMode === "month"
+                    ? "bg-neutral-900 text-white"
+                    : "bg-white text-neutral-600 hover:bg-neutral-100"
+                }`}
+              >
+                Mês
+              </button>
+              <button
+                onClick={() => setViewMode("list")}
+                className={`px-3 py-1 text-xs font-medium ${
+                  viewMode === "list"
+                    ? "bg-neutral-900 text-white"
+                    : "bg-white text-neutral-600 hover:bg-neutral-100"
+                }`}
+              >
+                Lista
+              </button>
+            </div>
           </div>
         </div>
 
@@ -183,6 +227,44 @@ export default function CalendarClient({
           </div>
         )}
 
+        {viewMode === "list" ? (
+          <div className="overflow-hidden rounded-lg border border-neutral-200 bg-white">
+            {monthPostsList.length === 0 ? (
+              <p className="p-6 text-center text-sm text-neutral-400">
+                Nenhum post com data marcada neste mês.
+              </p>
+            ) : (
+              monthPostsList.map((post) => (
+                <button
+                  key={post.id}
+                  onClick={() => openEditPost(post)}
+                  className="flex w-full items-center justify-between gap-3 border-b border-neutral-100 p-3 text-left last:border-b-0 hover:bg-neutral-50"
+                >
+                  <div className="w-14 shrink-0 text-xs font-medium text-neutral-500">
+                    {post.scheduled_date?.slice(8, 10)}/
+                    {post.scheduled_date?.slice(5, 7)}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-medium text-neutral-800">
+                      {post.title}
+                    </p>
+                    {post.brand_profile_id &&
+                      profileById.get(post.brand_profile_id) && (
+                        <p className="text-xs text-neutral-400">
+                          {profileById.get(post.brand_profile_id)!.name}
+                        </p>
+                      )}
+                  </div>
+                  <span
+                    className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium ${POST_STATUS_COLOR[post.status]}`}
+                  >
+                    {POST_STATUS_LABEL[post.status]}
+                  </span>
+                </button>
+              ))
+            )}
+          </div>
+        ) : (
         <div className="grid grid-cols-7 overflow-hidden rounded-lg border border-neutral-200 bg-white">
           {WEEKDAYS.map((day) => (
             <div
@@ -241,6 +323,7 @@ export default function CalendarClient({
             );
           })}
         </div>
+        )}
       </div>
 
       <aside className="w-full shrink-0 lg:w-64">
