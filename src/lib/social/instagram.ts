@@ -3,7 +3,6 @@ const GRAPH_BASE = `https://graph.facebook.com/${GRAPH_VERSION}`;
 
 const SCOPES = [
   "instagram_basic",
-  "instagram_manage_insights",
   "pages_show_list",
   "pages_read_engagement",
 ].join(",");
