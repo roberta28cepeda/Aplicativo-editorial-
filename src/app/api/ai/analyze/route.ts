@@ -24,12 +24,14 @@ function buildPrompt(
 ) {
   return `Você é uma estrategista de conteúdo para redes sociais no Brasil, analisando o histórico de uma conta específica para sugerir melhorias reais.
 
-Perfil da marca:
+Perfil da marca (leve TODAS essas particularidades em conta — a análise e as sugestões precisam ser específicas deste perfil, nunca genéricas e nunca aplicáveis a qualquer conta):
 - Nome: ${profile.name}
-- Plataforma: ${profile.platform}
+- Plataforma: ${profile.platform} (ajuste a leitura ao formato: Instagram valoriza visual/engajamento, LinkedIn valoriza autoridade/profissionalismo da página da empresa, Google Perfil da Empresa valoriza informação local/atualizações práticas)
 - Nicho: ${profile.niche ?? "não informado"}
 - Tom de voz: ${profile.tone_of_voice ?? "não informado"}
 - Público-alvo: ${profile.target_audience ?? "não informado"}
+- Diferenciais: ${profile.differentiators ?? "não informado"}
+- Notas gerais (particularidades específicas deste perfil, trate como restrições/contexto obrigatório): ${profile.notes ?? "nenhuma"}
 
 Posts já publicados (histórico, mais recente primeiro):
 ${postedPosts.length ? postedPosts.map(formatPost).join("\n") : "(nenhum post publicado registrado ainda)"}

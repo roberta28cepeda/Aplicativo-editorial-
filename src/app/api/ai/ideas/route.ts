@@ -15,22 +15,22 @@ function buildPrompt(profile: BrandProfile, recentTitles: string[]) {
 
   return `Você é um estrategista de conteúdo para redes sociais no Brasil. Hoje é ${today}.
 
-Perfil da marca:
+Perfil da marca (estas particularidades são a base de tudo — a pesquisa e as ideias precisam ser específicas deste perfil, nunca genéricas nem reaproveitáveis para outro perfil qualquer):
 - Nome: ${profile.name}
-- Plataforma: ${profile.platform}
+- Plataforma: ${profile.platform} (ajuste o formato e o tom ao canal: Instagram pede visual/engajamento, LinkedIn pede autoridade e tom profissional de página de empresa, Google Perfil da Empresa pede informação local/prática e atualizações)
 - Nicho: ${profile.niche ?? "não informado"}
 - Tom de voz: ${profile.tone_of_voice ?? "não informado"}
 - Público-alvo: ${profile.target_audience ?? "não informado"}
 - Cores da marca: ${colors}
 - Diferenciais: ${profile.differentiators ?? "não informado"}
-- Notas gerais: ${profile.notes ?? "nenhuma"}
+- Notas gerais (particularidades específicas deste perfil — trate como restrição/contexto obrigatório, não como detalhe opcional): ${profile.notes ?? "nenhuma"}
 
-Ideias já usadas recentemente (NÃO repita temas iguais a estes):
+Ideias já usadas recentemente neste perfil (NÃO repita temas iguais a estes):
 ${recentTitles.length ? recentTitles.map((t) => `- ${t}`).join("\n") : "(nenhuma ainda)"}
 
-Antes de gerar as ideias, use a busca na web para encontrar: tendências e notícias atuais do nicho dessa marca (últimas semanas), e datas comemorativas ou eventos relevantes do calendário brasileiro nos próximos 30 dias que façam sentido para esse nicho. Baseie pelo menos 2 das 5 ideias nisso que você encontrar.
+Antes de gerar as ideias, use a busca na web com termos que combinem o nicho E o público-alvo E particularidades das notas gerais deste perfil específico (não busque termos genéricos do tipo "tendências de redes sociais 2026" — busque o que é atual para ESTE nicho e ESTE público). Pesquise: tendências e notícias atuais do nicho (últimas semanas) relevantes para esse público-alvo, e datas comemorativas ou eventos do calendário brasileiro nos próximos 30 dias que façam sentido para esse nicho e região (se a região estiver indicada no público-alvo ou nas notas). Baseie pelo menos 2 das 5 ideias nisso que você encontrar.
 
-Gere exatamente 5 ideias de conteúdo novas, específicas para este perfil (nunca genéricas tipo "dica do dia" sem contexto). Cada ideia deve ter potencial real de engajamento para o público-alvo descrito.
+Gere exatamente 5 ideias de conteúdo novas, específicas para este perfil (nunca genéricas tipo "dica do dia" sem contexto, e nunca algo que serviria igual para um concorrente do mesmo nicho sem os mesmos diferenciais). Cada ideia deve ter potencial real de engajamento para o público-alvo descrito e respeitar o tom de voz informado.
 
 Cuidado com conformidade: não gere textos com promessas de resultado garantido, comparações diretas com concorrentes, ou alegações médicas/financeiras/jurídicas categóricas. Se o tema tocar em área regulada (saúde, direito, finanças), inclua uma nota em "notes" sugerindo revisão por um profissional antes de publicar.
 
